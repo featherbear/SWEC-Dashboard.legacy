@@ -1,0 +1,122 @@
+{% extends "/dropins/site.html" %}
+{% block head %}
+<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
+<script type="text/javascript" src="/assets/js/moment.min.js"></script>
+{% endblock %}
+{% block content %}
+<script type="text/javascript">
+    const actionsMap = {{actionsJSON}}
+</script>
+
+<table class="table is-striped is-hoverable is-fullwidth">
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Time</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th colspan="3"><a onclick="getMore()">Load more...</a></th>
+    </tr>
+    </tfoot>
+    <tbody>
+<!-- No content message here -->
+    </tbody>
+</table>
+
+<script>
+    function dataToRow(data) {
+        function resolveAction(actionID, data) {
+            switch (actionsMap[actionID]) {
+                case "SITE_LOGIN":
+                    return "User logged in"
+                case "NOTICE_SUBMIT":
+                    return "User submitted <a href='" + data + "'>a notice</a>"
+                case "NOTICE_EDIT":
+                    return "User modified <a href='" + data + "'>a notice</a>"
+                case "NOTICE_DELETE":
+                    return "User deleted <a href='" + data + "'>a notice</a>"
+                case "NOTICE_APPROVE":
+                    return "User approved <a href='" + data + "'>a notice</a>"
+                case "NOTICE_ACTIVATE":
+                    return "User enabled <a href='" + data + "'>a notice</a>"
+                case "NOTICE_DEACTIVATE":
+                    return "User disabled <a href='" + data + "'>a notice</a>"
+                case "BULLETIN_GENERATE":
+                    return "User generated a bulletin: "
+                case "LOCATION_MANAGE":
+                    return "User modified a location: "
+                case "USER_ADD":
+                    return "User created: "
+                case "USER_DELETE":
+                    return "User deleted: "
+                case "USER_LOCK":
+                    return "User locked: "
+                case "USER_PASSWORD":
+                    return "User password changed: " // User changed their password
+
+
+                default:
+                    console.log(actionsMap[actionID] + " - Unexpected data given")
+                    return "ERR"
+            }
+
+        }
+
+        row = document.createElement('tr')
+
+        description = document.createElement('td')
+        description.innerHTML = resolveAction(data.action, data.data)
+        row.appendChild(description)
+
+        author = document.createElement('td')
+        authorInner = document.createElement('a')
+        authorInner.href = "/../users/?id=" + data.author
+        authorInner.innerText = data.name
+        author.appendChild(authorInner)
+        row.appendChild(author)
+
+        timeContainer = document.createElement('td')
+
+        timeMoment = moment(data.time * 1000)
+        timeContent = document.createElement('span')
+
+        timeContent.classList.add("tooltip", "is-tooltip-right")
+        timeContent.setAttribute('data-tooltip', timeMoment.format("h:mma | MMM Do YYYY"))
+        timeContent.innerText = timeMoment.fromNow()
+        timeContainer.appendChild(timeContent)
+
+        row.appendChild(timeContainer)
+
+
+        return row;
+    }
+
+    var nextID = undefined;
+    (getMore = function() {
+        fetch('data.json', {
+            method: 'post',
+            body: JSON.stringify({startIndex: nextID})
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                if (jsonData.count == 0) {
+                    // no more data, hide / disable fetch more rows
+                    document.querySelector('table tfoot').style.display = "none"
+                } else {
+                // var time = jsonData.generated
+                for (var data of jsonData.results) {
+                    document.querySelector("table tbody").appendChild(dataToRow(data))
+                }
+                nextID = jsonData.nextRow
+                // nextID += jsonData.count
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })()
+</script>
+{% endblock %}

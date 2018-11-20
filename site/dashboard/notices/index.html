@@ -1,0 +1,468 @@
+{% extends "/dropins/site.html" %}
+{% block head %}
+<script type="text/javascript" src="/assets/js/moment.min.js"></script>
+
+<link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css">
+<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
+
+<script src="/assets/js/bulma-calendar.min.js"></script>
+<link rel="stylesheet" href="/assets/css/bulma-calendar.min.css">
+{% endblock %}
+{% block content %}
+<div id="confirmDelete" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Confirm Delete</p>
+        </header>
+        <section class="modal-card-body">
+            Are you sure you want to delete this notice?
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-danger confirm">Delete</button>
+            <button class="button cancel">Cancel</button>
+        </footer>
+    </div>
+</div>
+<div id="noticeEdit" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Notice Edit</p>
+        </header>
+        <section class="modal-card-body">
+            <form>
+                {% include "/dashboard/notices/submit/submitNotice.template.html" %}
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success confirm">Save Changes</button>
+            <button class="button cancel">Cancel</button>
+        </footer>
+    </div>
+</div>
+<div class="tile is-ancestor is-unselectable">
+    <div class="tile is-parent"></div>
+</div>
+<script>
+    function openModalDelete(noticeID, /*onConfirm*/ /*, onCancel*/) {
+        var modal = document.getElementById('confirmDelete');
+        let form = modal.querySelector('form')
+        const closeModal = function () {
+            modal.querySelector('button.confirm').removeEventListener('click', confirmEvent)
+            modal.querySelector('button.cancel').removeEventListener('click', cancelEvent)
+            modal.querySelector('.modal-background').removeEventListener('click', cancelEvent)
+            modal.classList.remove('is-active');
+        }
+
+        const confirmEvent = function (evt) {
+            evt.target.classList.add('is-loading')
+            fetch('delete', {
+                method: 'post',
+                body: JSON.stringify({id: noticeID})
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    evt.target.classList.remove('is-loading')
+                    if (jsonData.status) {
+                        var tile = document.getElementById('tile' + noticeID).parentElement.parentElement
+                        tile.parentElement.removeChild(tile)
+                        // reflow()
+                        closeModal();
+                    } else {
+                        // what to do if there's an error?
+                    }
+                })
+        }
+
+        const cancelEvent = function (evt) {
+            // onCancel && onCancel();
+            closeModal();
+        }
+
+        modal.querySelector('button.confirm').addEventListener('click', confirmEvent)
+        modal.querySelector('button.cancel').addEventListener('click', cancelEvent)
+        modal.querySelector('.modal-background').addEventListener('click', cancelEvent)
+
+        modal.classList.add('is-active');
+    }
+
+
+    function openModalEdit(noticeElement, noticeID, /*onConfirm*/ /*, onCancel*/) {
+        var modal = document.getElementById('noticeEdit');
+
+        let modalTitleForm = modal.querySelector('form input[name=title]')
+        console.log(modalTitleForm)
+        let modalDescriptionForm = modal.querySelector('form textarea[name=description]')
+        let modalDateForm = modal.querySelector('form input[name=date]')
+        let modalEndDateForm = modal.querySelector('form input[name=endDate]');
+
+        let noticeTitleElem = noticeElement.querySelector('p.title')
+        let noticeDescriptionElem = noticeElement.querySelector('div.content')
+        let noticeDateElem = noticeElement.querySelector('input[name=date]')
+        let noticeEndDateElem = noticeElement.querySelector('input[name=endDate]')
+
+
+        modalTitleForm.value = noticeTitleElem.innerText;
+        modalDescriptionForm.value = noticeDescriptionElem.innerText;
+
+        modalDateForm.value = noticeDateElem.value;
+        modalEndDateForm.value = noticeEndDateElem.value;
+
+        calendar.startDate = moment(noticeDateElem.value, "DD/MM/YYYY").toDate()
+        if (noticeEndDateElem.value != noticeDateElem.value) calendar.endDate = moment(noticeEndDateElem.value, "DD/MM/YYYY").toDate()
+        calendar.show()
+
+        const closeModal = function () {
+            modal.querySelector('button.confirm').removeEventListener('click', confirmEvent)
+            modal.querySelector('button.cancel').removeEventListener('click', cancelEvent)
+            modal.querySelector('.modal-background').removeEventListener('click', cancelEvent)
+            modal.classList.remove('is-active');
+        }
+
+        const confirmEvent = function (evt) {
+
+        var form = document.querySelector('form')
+        if (!form.date.value || (!form.title.value && !form.description.value)) {
+            alert("Please fill in the form!")
+            return;
+        }
+
+
+            evt.target.classList.add('is-loading')
+
+            var data =     {
+                        id: noticeID,
+                        title: modalTitleForm.value,
+                        description: modalDescriptionForm.value,
+                        startDate: moment(calendar.startDate).format("DD/MM/YYYY"),
+                        endDate: moment(calendar.endDate ? calendar.endDate : calendar.startDate).format("DD/MM/YYYY")
+                    }
+            fetch('edit', {
+                method: 'post',
+                body: JSON.stringify(data
+
+                )
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    evt.target.classList.remove('is-loading')
+                    if (jsonData.status) {
+                        noticeTitleElem.innerText=data.title;
+                        noticeDescriptionElem.innerText=data.description
+                        noticeDateElem.value = data.startDate
+                        noticeEndDateElem.value = data.endDate
+                        closeModal();
+                    } else {
+                        // what to do if there's an error?
+                    }
+                })
+        }
+
+        const cancelEvent = function (evt) {
+            // onCancel && onCancel();
+            closeModal();
+        }
+
+        modal.querySelector('button.confirm').addEventListener('click', confirmEvent)
+        modal.querySelector('button.cancel').addEventListener('click', cancelEvent)
+        modal.querySelector('.modal-background').addEventListener('click', cancelEvent)
+
+        modal.classList.add('is-active');
+    }
+
+
+</script>
+<script>
+    function blankTile() {
+        tile = document.createElement('article')
+        tile.classList.add("tile", "is-child", "notification")
+        return tile
+    }
+
+    function toggleCheckState(elem, update) {
+        elem.checked = !elem.checked;
+        if (update) updateTileAppearance(elem.parentElement.parentElement)
+        return elem.checked
+    }
+
+    // function toggleTileActiveState(elem) {
+    //     return toggleCheckState(elem.querySelector('input'))
+    // }
+
+
+    function updateTileAppearance(elem) {
+        if (!elem.querySelector('input').checked) {
+            elem.classList.toggle('is-primary', false)
+            elem.classList.toggle('has-background-warning', false)
+            elem.classList.toggle('has-text-grey-lighter', true)
+            elem.classList.toggle('has-background-white-ter', true)
+            elem.querySelectorAll('button.button').forEach(function (btn) {
+                btn.disabled = true
+            })
+        } else {
+            elem.querySelectorAll('button.button').forEach(function (btn) {
+                btn.disabled = false
+            })
+
+            if (elem.getAttribute('approved') === "true") {
+                elem.classList.toggle('is-primary', true)
+                elem.classList.toggle('has-background-warning', false)
+                elem.classList.toggle('has-text-grey-lighter', false)
+                elem.classList.toggle('has-background-white-ter', false)
+            } else {
+                elem.classList.toggle('is-primary', false)
+                elem.classList.toggle('has-background-warning', true)
+                elem.classList.toggle('has-text-grey-lighter', false)
+                elem.classList.toggle('has-background-white-ter', false)
+            }
+        }
+
+    }
+
+
+    var nextID = 0;
+    var entries = 0;
+    (function getMore() {
+        fetch('data.json', {
+            method: 'post',
+            body: JSON.stringify({startIndex: nextID})
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                if (jsonData.count == 0) {
+                    // no more data, hide / disable fetch more rows
+                } else {
+
+                    function dataToTile(data) {
+                        function createButton(text, onclick, classes) {
+                            if (!classes) {
+                                classes = ["is-dark",]
+                            }
+                            button = document.createElement('button')
+                            button.classList.add("button", "is-outlined", "is-inverted", ...classes)
+                            button.innerText = text
+                            button.addEventListener('click', onclick)
+                            return button
+                        }
+
+                        tile = document.createElement('article')
+                        tile.setAttribute('approved', data.approved)
+                        // tile.setAttribute('noticeID', data.id)
+
+                        tile.classList.add("tile", "is-child", "notification")
+                        if (jsonData.canManage) {
+                            tile.classList.add("canManage")
+                        }
+
+                        activeToggle = document.createElement('div')
+                        activeToggle.classList.add('field', 'notificationActiveCheckbox')
+
+                        activeCheckbox = document.createElement('input')
+                        activeCheckbox.classList.add('is-checkradio', "is-white")
+                        activeCheckbox.type = "radio"
+                        activeCheckbox.id = "tile" + data.id
+
+                        activeToggle.appendChild(activeCheckbox)
+
+                        activeLabel = document.createElement('label')
+                        activeLabel.htmlFor = "tile" + data.id
+                        activeLabel.addEventListener('click', function (evt) {
+
+
+                            fetch('active', {
+                                method: 'post',
+                                body: JSON.stringify({
+                                    id: data.id,
+                                    active: !evt.target.control.checked
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(jsonData => {
+                                    if (jsonData.status) {
+                                        state = toggleCheckState(evt.target.control, true)
+                                    } else {
+
+                                    }
+                                })
+
+                            evt.preventDefault()
+                        })
+
+                        activeToggle.appendChild(activeLabel)
+
+                        tile.appendChild(activeToggle)
+
+                        title = document.createElement('p')
+                        title.classList.add("title")
+                        title.innerText = data.title
+                        tile.appendChild(title)
+
+                        subtitle = document.createElement('p')
+                        subtitle.classList.add("subtitle")
+                        subtitle.innerText = data.name
+                        tile.appendChild(subtitle)
+
+                        content = document.createElement('div')
+                        content.classList.add("content")
+                        content.innerText = data.description
+                        // content.innerHTML = data.description ????
+                        tile.appendChild(content)
+
+                        date = document.createElement('input')
+                        date.type = "hidden"
+                        date.name = "date"
+                        date.value = data.date
+                        tile.appendChild(date)
+
+                        endDate = document.createElement('input')
+                        endDate.type = "hidden"
+                        endDate.name = "endDate"
+                        endDate.value = data.endDate
+                        tile.appendChild(endDate)
+
+                        buttons = document.createElement('div')
+                        buttons.classList.add("buttons", "has-addons", "is-right")
+                        if (!data.approved && jsonData.canManage) {
+                            buttons.appendChild(createButton("Approve", function (evt) {
+                                elem = evt.target
+                                elem.classList.add("is-loading")
+
+                                fetch('approve', {
+                                    method: 'post',
+                                    body: JSON.stringify({
+                                        id: data.id
+                                    })
+                                })
+                                    .then(response => response.json())
+                                    .then(jsonData => {
+                                        console.log(jsonData)
+                                        if (jsonData.status === true) {
+                                            elem.parentElement.parentElement.setAttribute('approved', "true")
+                                            updateTileAppearance(elem.parentElement.parentElement)
+                                            elem.parentElement.removeChild(elem)
+                                        } else {
+                                            elem.classList.remove('is-loading')
+                                        }
+                                    })
+
+
+                            }))
+                        }
+
+                        if (data.author === jsonData.uid || jsonData.canManage) {
+                            buttons.appendChild(createButton("Edit", function (evt) {
+                                openModalEdit(evt.target.parentElement.parentElement, data.id)
+                            }))
+
+                            buttons.appendChild(createButton("Delete", function (evt) {
+                                openModalDelete(data.id)
+                            }, ["is-danger"]))
+
+                        }
+                        if (buttons.childElementCount > 0) tile.appendChild(buttons)
+
+                        if (data.active) {
+                            toggleCheckState(activeCheckbox, false)
+                        }
+                        updateTileAppearance(tile)
+
+                        return tile
+                    }
+
+
+                    // var time = jsonData.generated
+                    for (var data of jsonData.results) {
+                        tile = dataToTile(data)
+                        tile.classList.add('is-4')
+                        document.querySelector('div.tile.is-ancestor .is-parent').appendChild(tile)
+                    }
+
+                    // document.querySelectorAll('div.tile.is-ancestor .is-parent')[entries++ % 3].appendChild(blankTile())
+                    // document.querySelectorAll('div.tile.is-ancestor .is-parent')[entries++ % 3].appendChild(blankTile())
+
+                    nextID += jsonData.count
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })()
+
+
+    document.querySelector('form').addEventListener('submit', function (evt) {
+        evt.preventDefault()
+    })
+
+</script>
+
+<style>
+    article {
+        cursor: pointer;
+        border: 1px #dbdbdb !important;
+    }
+
+    article:hover {
+        border: 2px;
+    }
+
+    article .content {
+        word-wrap: break-word;
+    }
+
+    .notificationActiveCheckbox {
+        position: absolute;
+        right: -1rem;
+        top: 0.5rem;
+    }
+
+    article.tile {
+        transition: all 0.3s;
+    }
+
+    article.tile.has-text-grey-lighter div.buttons {
+        visibility: hidden;
+    }
+
+    article.tile div.buttons button.button {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    article.tile:hover:not(.has-text-grey-lighter) div.buttons:not(:hover) button.button {
+        opacity: 0.5;
+    }
+
+    article.tile:hover:not(.has-text-grey-lighter) div.buttons button.button {
+        opacity: 1;
+    }
+
+    article.tile:not(.canManage) div.notificationActiveCheckbox {
+        display: none;
+    }
+
+    div.tile.is-ancestor.is-unselectable .is-parent:empty::before {
+        content: "No notices";
+        font-size: 2em;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+    }
+
+    div.tile.is-ancestor .is-parent {
+        flex-flow: wrap;
+    }
+
+    article.tile.is-child {
+        margin: 5px !important;
+        flex-grow: 1;
+    }
+
+    @media screen and (min-width: 769px) {
+        article.tile.is-child {
+            width: 30%;
+        }
+    }
+
+</style>
+{% endblock %}

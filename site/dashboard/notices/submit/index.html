@@ -1,0 +1,35 @@
+{% extends "/dropins/site.html" %}
+{% block head %}
+<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
+<script type="text/javascript" src="/assets/js/moment.min.js"></script>
+
+<script src="/assets/js/bulma-calendar.min.js"></script>
+<link rel="stylesheet" href="/assets/css/bulma-calendar.min.css">
+{% endblock %}
+{% block content %}
+<form method="post">
+{% include "/dashboard/notices/submit/submitNotice.template.html" %}
+</form>
+
+
+<div class="field is-grouped">
+        <div class="control">
+            <button class="button is-link submit">Submit</button>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    document.querySelector('form').addEventListener('submit', evt =>{
+        evt.preventDefault()
+    })
+
+    document.querySelector('button.submit').addEventListener('click', evt =>{
+        let form = document.querySelector('form')
+        if (form.date.value && (form.title.value || form.description.value)) {
+            document.querySelector('form').submit();
+        } else {
+            alert("Please fill in the form!")
+        }
+    })
+</script>
+{% endblock %}

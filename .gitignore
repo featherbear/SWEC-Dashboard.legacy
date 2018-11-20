@@ -1,0 +1,6 @@
+/data.sqlite
+/settings.ini
+/.idea/
+__pycache__/
+/venv/
+/activatevenv.sh

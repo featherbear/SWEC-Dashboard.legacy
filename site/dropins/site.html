@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SWEC Bulletin Tool</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet"/>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>-->
+    <link rel="stylesheet" type="text/css" href="/assets/css/bulma.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/site.css"/>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<!-- START NAV -->
+<nav class="navbar is-white">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item brand-text" href="/">
+                SWEC Bulletin Tool
+            </a>
+            <div class="navbar-burger burger" data-target="navMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/dashboard/">
+                    Home
+                </a>
+                <a class="navbar-item" href="admin.html">
+                    Orders
+                </a>
+                <a class="navbar-item" href="admin.html">
+                    Payments
+                </a>
+                <a class="navbar-item" href="admin.html">
+                    Exceptions
+                </a>
+            </div>
+            <div class="navbar-end">
+
+                <a class="navbar-item" href="/logout">
+                    Logout
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+<!-- END NAV -->
+
+<!-- START MENU -->
+<div class="container">
+    <div class="columns">
+        <div class="column is-3">
+            <aside class="menu">
+                <a href="/dashboard/">Dashboard</a>
+                <p class="menu-label">
+                    Notices
+                </p>
+                <ul class="menu-list">
+                    <li><a href="/dashboard/notices/submit/">Submit Notice</a></li>
+                    <li><a href="/dashboard/notices/">View Notices</a></li>
+                </ul>
+                <p class="menu-label">
+                    Bulletin
+                </p>
+                <ul class="menu-list">
+                    <li><a>Team Settings</a></li>
+                    <li>
+                        <a>Manage Your Team</a>
+                        <ul>
+                            <li><a>Members</a></li>
+                            <li><a>Plugins</a></li>
+                            <li><a>Add a member</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Manage Sites</a></li>
+                </ul>
+                <p class="menu-label">
+                    Sermon Outline
+                </p>
+                <ul class="menu-list">
+                    <li><a>View</a></li>
+                    <li><a>Transfers</a></li>
+                </ul>
+
+                {% if isAdmin %}
+                <p class="menu-label">
+                    Admin
+                </p>
+                <ul class="menu-list">
+                    <li><a href="/dashboard/admin/users/">User Management</a></li>
+                    <li><a href="/dashboard/admin/audit/">Audit Log</a></li>
+                </ul>
+                {% endif %}
+            </aside>
+        </div>
+        <div class="column is-9">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </div>
+</div>
+<!-- END MENU -->
+
+
+
+<script async type="text/javascript" src="/assets/js/bulma.js"></script>
+<script type="text/javascript">
+    for (elem of document.querySelectorAll('aside.menu a')) {
+        if (elem.pathname == location.pathname) {
+elem.classList.add('is-active')
+}
+}
+</script>
+</body>
+
+</html>
