@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <script type="text/javascript">
-    const permissionsMap = {{permissionsMap}}
+    const permissionsMap = {{ permissionsMap }}
 </script>
 <div id="userEdit" class="modal">
     <div class="modal-background"></div>
@@ -23,27 +23,27 @@
                 <div>User Type: <span class="data-type"></span></div>
                 <div>Username: <span class="data-username"></span></div>
                 <div>Password: <span class="button is-warning is-small">Change password</span></div>
-                                
+
                 <div class="label">Permissions</div>
                 <script type="text/javascript">
-                var here = document.querySelector("#userEdit form")
-                for (var i = 0; permissionsMap[i]; i++) {
-                    var field = document.createElement('div')
-                    field.classList.add('field')
-                    
-                    var input = document.createElement('input')
-                    input.classList.add("is-checkradio", "is-block", "is-info")
-                    input.type = "checkbox"
-                    input.id = permissionsMap[i]
-                    field.appendChild(input)
+                    var here = document.querySelector("#userEdit form")
+                    for (var i = 0; permissionsMap[i]; i++) {
+                        var field = document.createElement('div')
+                        field.classList.add('field')
 
-                    var label = document.createElement('label')
-                    label.htmlFor = permissionsMap[i]
-                    label.innerHTML = permissionsMap[i]
-                    field.appendChild(label)
+                        var input = document.createElement('input')
+                        input.classList.add("is-checkradio", "is-block", "is-info")
+                        input.type = "checkbox"
+                        input.id = permissionsMap[i]
+                        field.appendChild(input)
 
-                    here.appendChild(field)
-                }
+                        var label = document.createElement('label')
+                        label.htmlFor = permissionsMap[i]
+                        label.innerHTML = permissionsMap[i]
+                        field.appendChild(label)
+
+                        here.appendChild(field)
+                    }
                 </script>
 
             </form>
@@ -58,18 +58,18 @@
 
 <table class="table is-striped is-hoverable is-fullwidth">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
     </thead>
     <tfoot>
-    <tr>
-        <th colspan="2"><a onclick="getMore()">Load more...</a></th>
-    </tr>
+        <tr>
+            <th colspan="2"><a onclick="getMore()">Load more...</a></th>
+        </tr>
     </tfoot>
     <tbody>
-    <!-- No content message here -->
+        <!-- No content message here -->
     </tbody>
 </table>
 <script type="text/javascript">
@@ -79,7 +79,7 @@
         modal.querySelector('.data-id').innerText = elem.getAttribute("data-id")
         modal.querySelector('.data-type').innerText = elem.getAttribute("data-type")
         modal.querySelector('.data-username').innerText = elem.getAttribute("data-username")
-        
+
         var permissions = elem.getAttribute('data-permissions').split(",").map(parseInt)
         for (var i = 0; permissionsMap[i]; i++) {
             document.getElementById(permissionsMap[i]).checked = permissions[i]
@@ -100,12 +100,12 @@
             var data = {
                 id: elem.getAttribute('data-id')
             }
-            
+
             for (var i = 0; permissionsMap[i]; i++) {
                 if (Boolean(document.getElementById(permissionsMap[i]).checked) != Boolean(permissions[i])) {
                     data[permissionsMap[i]] = permissions[i] = document.getElementById(permissionsMap[i]).checked
                 }
-             }
+            }
 
             fetch('permission', {
                 method: 'post',
@@ -122,16 +122,16 @@
                     }
                 })
         }
-    
+
         const cancelEvent = function (evt) {
             // onCancel && onCancel();
             closeModal();
         }
-    
+
         modal.querySelector('button.confirm').addEventListener('click', confirmEvent)
         modal.querySelector('button.cancel').addEventListener('click', cancelEvent)
         modal.querySelector('.modal-background').addEventListener('click', cancelEvent)
-    
+
     }
 </script>
 <script>
@@ -152,8 +152,8 @@
         row.setAttribute('data-type', data.userType)
         row.setAttribute('data-username', data.username)
         row.setAttribute('data-permissions', data.permissions)
-        
-        row.addEventListener('click', function(evt) {
+
+        row.addEventListener('click', function (evt) {
             openModalUserEdit(this)
         });
 
@@ -164,7 +164,7 @@
     (getMore = function () {
         fetch('data.json', {
             method: 'post',
-            body: JSON.stringify({startIndex: nextID})
+            body: JSON.stringify({ startIndex: nextID })
         })
             .then(response => response.json())
             .then(jsonData => {

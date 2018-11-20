@@ -59,7 +59,7 @@
             evt.target.classList.add('is-loading')
             fetch('delete', {
                 method: 'post',
-                body: JSON.stringify({id: noticeID})
+                body: JSON.stringify({ id: noticeID })
             })
                 .then(response => response.json())
                 .then(jsonData => {
@@ -122,22 +122,22 @@
 
         const confirmEvent = function (evt) {
 
-        var form = document.querySelector('form')
-        if (!form.date.value || (!form.title.value && !form.description.value)) {
-            alert("Please fill in the form!")
-            return;
-        }
+            var form = document.querySelector('form')
+            if (!form.date.value || (!form.title.value && !form.description.value)) {
+                alert("Please fill in the form!")
+                return;
+            }
 
 
             evt.target.classList.add('is-loading')
 
-            var data =     {
-                        id: noticeID,
-                        title: modalTitleForm.value,
-                        description: modalDescriptionForm.value,
-                        startDate: moment(calendar.startDate).format("DD/MM/YYYY"),
-                        endDate: moment(calendar.endDate ? calendar.endDate : calendar.startDate).format("DD/MM/YYYY")
-                    }
+            var data = {
+                id: noticeID,
+                title: modalTitleForm.value,
+                description: modalDescriptionForm.value,
+                startDate: moment(calendar.startDate).format("DD/MM/YYYY"),
+                endDate: moment(calendar.endDate ? calendar.endDate : calendar.startDate).format("DD/MM/YYYY")
+            }
             fetch('edit', {
                 method: 'post',
                 body: JSON.stringify(data
@@ -148,8 +148,8 @@
                 .then(jsonData => {
                     evt.target.classList.remove('is-loading')
                     if (jsonData.status) {
-                        noticeTitleElem.innerText=data.title;
-                        noticeDescriptionElem.innerText=data.description
+                        noticeTitleElem.innerText = data.title;
+                        noticeDescriptionElem.innerText = data.description
                         noticeDateElem.value = data.startDate
                         noticeEndDateElem.value = data.endDate
                         closeModal();
@@ -226,7 +226,7 @@
     (function getMore() {
         fetch('data.json', {
             method: 'post',
-            body: JSON.stringify({startIndex: nextID})
+            body: JSON.stringify({ startIndex: nextID })
         })
             .then(response => response.json())
             .then(jsonData => {
@@ -463,6 +463,5 @@
             width: 30%;
         }
     }
-
 </style>
 {% endblock %}

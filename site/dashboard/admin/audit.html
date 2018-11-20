@@ -5,24 +5,24 @@
 {% endblock %}
 {% block content %}
 <script type="text/javascript">
-    const actionsMap = {{actionsJSON}}
+    const actionsMap = {{ actionsJSON }}
 </script>
 
 <table class="table is-striped is-hoverable is-fullwidth">
     <thead>
-    <tr>
-        <th>Description</th>
-        <th>Author</th>
-        <th>Time</th>
-    </tr>
+        <tr>
+            <th>Description</th>
+            <th>Author</th>
+            <th>Time</th>
+        </tr>
     </thead>
     <tfoot>
-    <tr>
-        <th colspan="3"><a onclick="getMore()">Load more...</a></th>
-    </tr>
+        <tr>
+            <th colspan="3"><a onclick="getMore()">Load more...</a></th>
+        </tr>
     </tfoot>
     <tbody>
-<!-- No content message here -->
+        <!-- No content message here -->
     </tbody>
 </table>
 
@@ -45,18 +45,31 @@
                 case "NOTICE_DEACTIVATE":
                     return "User disabled <a href='" + data + "'>a notice</a>"
                 case "BULLETIN_GENERATE":
-                    return "User generated a bulletin: "
+                    return "User generated a bulletin: " + data
                 case "LOCATION_MANAGE":
-                    return "User modified a location: "
+                    return "User modified a location: " + data
                 case "USER_ADD":
-                    return "User created: "
+                    return "User created: " + data
                 case "USER_DELETE":
-                    return "User deleted: "
-                case "USER_LOCK":
-                    return "User locked: "
+                    return "User deleted: " + data
                 case "USER_PASSWORD":
-                    return "User password changed: " // User changed their password
-
+                    return "User password changed: " + data
+                case "USER_LOCK":
+                    return "User logon disabled: " + data
+                case "USER_ACTIVE":
+                    return "User logon enabled: " + data
+                case "USER_ADMIN_PROMOTE":
+                    return "User promoted to admin: " + data
+                case "USER_ADMIN_DEMOTE":
+                    return "User demoted from admin: " + data
+                case "NOTICE_CAN_POST":
+                    return "User allowed to post notices: " + data
+                case "NOTICE_CANNOT_POST":
+                    return "User disallowed from posting notices: " + data
+                case "NOTICE_CAN_MODIFY":
+                    return "User allowed to approve and edit notices: " + data
+                case "NOTICE_CANNOT_MODIFY":
+                    return "User disallowed from approving and editing notices: " + data
 
                 default:
                     console.log(actionsMap[actionID] + " - Unexpected data given")
@@ -95,10 +108,10 @@
     }
 
     var nextID = undefined;
-    (getMore = function() {
+    (getMore = function () {
         fetch('data.json', {
             method: 'post',
-            body: JSON.stringify({startIndex: nextID})
+            body: JSON.stringify({ startIndex: nextID })
         })
             .then(response => response.json())
             .then(jsonData => {
@@ -106,12 +119,12 @@
                     // no more data, hide / disable fetch more rows
                     document.querySelector('table tfoot').style.display = "none"
                 } else {
-                // var time = jsonData.generated
-                for (var data of jsonData.results) {
-                    document.querySelector("table tbody").appendChild(dataToRow(data))
-                }
-                nextID = jsonData.nextRow
-                // nextID += jsonData.count
+                    // var time = jsonData.generated
+                    for (var data of jsonData.results) {
+                        document.querySelector("table tbody").appendChild(dataToRow(data))
+                    }
+                    nextID = jsonData.nextRow
+                    // nextID += jsonData.count
                 }
             })
             .catch(err => {
