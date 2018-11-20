@@ -1,0 +1,310 @@
+{% extends "/dropins/site.html" %}
+{% block head %}
+<script type="text/javascript" src="/assets/js/moment.min.js"></script>
+
+<link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css">
+<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
+<link rel="stylesheet" href="/assets/css/bulma-divider.min.css" />
+<script src="/assets/js/bulma-calendar.min.js"></script>
+<link rel="stylesheet" href="/assets/css/bulma-calendar.min.css">
+{% endblock %}
+{% block content %}
+
+
+<div id="siteEdit" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Site Edit</p>
+        </header>
+        <section class="modal-card-body">
+            <form>
+                <div class="field">
+                    <label class="label">Site Name</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Site name" name="name" required>
+                    </div>
+                </div>
+                <div class="is-divider"></div>
+                <label class="label">Options</label>
+                <div class="container"></div>
+                <a class="button is-link is-outlined">Add new replacement option</a>
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success confirm">Save Changes</button>
+            <button class="button cancel">Cancel</button>
+        </footer>
+    </div>
+</div>
+
+
+
+
+<div class="tile is-ancestor is-unselectable">
+    <div class="tile is-parent">
+        <article class="tile is-child notification is-4 has-text-centered is-primary newSiteCard">
+            <i class="fa fa-plus-circle fa-5x"></i>
+            <h1 class="title">Add new site</h1>
+        </article>
+    </div>
+</div>
+<script>
+    document.querySelector('#siteEdit form a.button').addEventListener('click', function () {
+        this.parentElement.querySelector('.container').appendChild(keyValElem("", ""))
+    })
+
+    function keyValElem(key, value, id) {
+        var field_body = document.createElement('div')
+        field_body.classList.add('field-body')
+
+        var keyElem = document.createElement('div')
+        keyElem.classList.add('field')
+
+        var controlElem = document.createElement('p')
+        controlElem.classList.add('control', 'is-expanded')
+
+        var input = document.createElement('input')
+        input.classList.add('input')
+        input.type = "text"
+
+        controlElem.appendChild(input)
+        keyElem.appendChild(controlElem)
+
+        valueElem = keyElem.cloneNode(true)
+
+        keyElem.querySelector('input').placeholder = "Key"
+        keyElem.querySelector('input').name = "key"
+        keyElem.querySelector('input').value = key
+        keyElem.querySelector('input').required = true;
+
+        valueElem.querySelector('input').placeholder = "Value"
+        valueElem.querySelector('input').name = "value"
+        valueElem.querySelector('input').value = value
+        valueElem.querySelector('input').required = true;
+
+        field_body.append(keyElem)
+        field_body.append(valueElem)
+
+        if (id) field_body.setAttribute('data-id', id)
+        /*
+            Check for duplicate keys
+        */
+        field_body.__defineGetter__('key', function () { return this.querySelector('input[name=key]').value })
+        field_body.__defineGetter__('value', function () { return this.querySelector('input[name=value').value })
+
+        return field_body
+    }
+
+
+    function openModalEdit(siteID, srcElem) {
+        let site = sitesData[siteID]
+
+        var modal = document.getElementById('siteEdit')
+        var form = modal.querySelector('form')
+
+        // https://stackoverflow.com/a/3955238
+        var container = form.querySelector('.container')
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        var name = form.querySelector('input[name=name]')
+
+
+        if (siteID) {
+            name.value = site.name
+
+            var sortedOptions = Object.values(site.replacements).sort(function (a, b) {
+                return a.key.localeCompare(b.key);
+            })
+            for (var option of sortedOptions) {
+                container.appendChild(keyValElem(option.key, option.value, option.id))
+            }
+
+        } else {
+            name.value = ""
+        }
+
+        const closeModal = function () {
+            modal.querySelector('button.confirm').removeEventListener('click', confirmEvent)
+            modal.querySelector('button.cancel').removeEventListener('click', cancelEvent)
+            modal.querySelector('.modal-background').removeEventListener('click', cancelEvent)
+            modal.classList.remove('is-active');
+        }
+
+        const confirmEvent = function (evt) {
+
+            evt.target.classList.add('is-loading')
+
+            var request = genReqObj()
+            if (!validate(request)) {
+                evt.target.classList.remove('is-loading')
+                return
+            }
+
+            fetch('editSite', {
+                method: 'post',
+                body: JSON.stringify(request)
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    evt.target.classList.remove('is-loading')
+                    sitesData[jsonData.id] = jsonData
+
+                    if (!siteID) {
+                        srcElem = dataToTile(jsonData)
+                        document.querySelector('div.tile.is-ancestor .is-parent').insertBefore(srcElem, document.querySelector('div.tile.is-ancestor .is-parent .newSiteCard'))
+                    }
+                    srcElem.querySelector('p.title').innerText = jsonData.name
+                    closeModal();
+                })
+        }
+
+
+
+        const validate = function (reqObj) {
+            return form.reportValidity() && (reqObj.name || reqObj.replacements)
+        }
+
+        const genReqObj = function () {
+            // validate()
+            var req = {
+                name: name.value.trim(),
+                id: siteID ? site.id : undefined,
+                replacements: []
+            }
+
+            for (var keyVal of container.children) {
+                var id = keyVal.getAttribute('data-id', undefined)
+
+                var option = {
+                    key: keyVal.key.trim(),
+                    value: keyVal.value.trim()
+                }
+
+                if (id) { option.id = id }
+                // if (key != site.replacements[id].key || value != site.replacements[id].value) {
+                req.replacements.push(option)
+            }
+
+            return req;
+        }
+
+
+
+        const cancelEvent = function (evt) {
+            closeModal();
+        }
+
+        modal.querySelector('button.confirm').addEventListener('click', confirmEvent)
+        modal.querySelector('button.cancel').addEventListener('click', cancelEvent)
+        modal.querySelector('.modal-background').addEventListener('click', cancelEvent)
+
+        modal.classList.add('is-active');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function dataToTile(data) {
+        tile = document.createElement('article')
+        tile.classList.add("tile", "is-child", "notification", "is-4")
+        tile.classList.add("is-info")
+
+        title = document.createElement('p')
+        title.classList.add("title")
+        title.innerText = data.name
+        // title.innerText = data.title
+        tile.appendChild(title)
+
+        tile.addEventListener('click', function () {
+            openModalEdit(data.id, this)
+        })
+
+        return tile
+    }
+
+    var sitesData = {};
+    fetch('data.json', {
+        method: 'post',
+    })
+        .then(response => response.json())
+        .then(jsonData => {
+            if (jsonData.count == 0) {
+                // no more data, hide / disable fetch more rows
+            } else {
+                for (var data of jsonData.results) {
+                    sitesData[data.id] = data
+                    document.querySelector('div.tile.is-ancestor .is-parent').insertBefore(dataToTile(data), document.querySelector('div.tile.is-ancestor .is-parent .newSiteCard'))
+                }
+            }
+        })
+
+
+
+    document.querySelector('div.tile.is-ancestor .is-parent .newSiteCard').addEventListener('click', function () {
+        openModalEdit()
+    })
+
+
+</script>
+
+<style>
+    article {
+        cursor: pointer;
+        border: 1px #dbdbdb !important;
+    }
+
+    article:hover {
+        border: 2px;
+    }
+
+    article.tile {
+        transition: all 0.3s;
+    }
+
+    div.tile.is-ancestor .is-parent {
+        flex-flow: wrap;
+    }
+
+    article.tile.is-child {
+        margin: 5px !important;
+    }
+
+    @media screen and (min-width: 769px) {
+        article.tile.is-child {
+            width: 30%;
+            min-height: 25vh;
+        }
+
+        div.tile.is-ancestor .is-parent .newSiteCard {
+            padding-top: 6vh;
+
+        }
+    }
+
+    div.tile.is-ancestor .is-parent:hover article.tile.is-child:not(:hover) {
+        opacity: 0.6
+    }
+
+
+
+</style>
+{% endblock %}
