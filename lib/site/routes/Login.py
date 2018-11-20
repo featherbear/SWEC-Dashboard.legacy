@@ -12,7 +12,7 @@ from ...auth.AuthenticateLocal import NoUserException, UserLockedException
 def post(self: tornado.web.RequestHandler, path):
     self.request: tornado.httputil.HTTPServerRequest
 
-    ## auth just for local (non-oauth) login
+    # auth just for local (non-oauth) login
 
     username = self.get_body_argument('u', False)
     password = self.get_body_argument('p', False)
@@ -26,5 +26,6 @@ def post(self: tornado.web.RequestHandler, path):
     else:
         from ... import audit
         audit.log(audit.action.SITE_LOGIN, id)
-        self.set_secure_cookie("session", "|".join([auth.AUTH_TYPE.AUTH_USER, username, str(int(time()) + 60 * 60)]))
+        self.set_secure_cookie("session", "|".join(
+            [auth.AUTH_TYPE.AUTH_USER, username, str(int(time()) + 60 * 60)]))
         return self.redirect(self.get_query_argument("next", "/"))

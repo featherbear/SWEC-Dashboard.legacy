@@ -44,7 +44,8 @@ class SiteHandler(tornado.web.StaticFileHandler, BaseHandler):
 
     def get_current_user(self):
         try:
-            user = auth.UserSession(*self.get_secure_cookie("session").split(b'|'))
+            user = auth.UserSession(
+                *self.get_secure_cookie("session").split(b'|'))
             user.expiry = str(int(time()) + 60 * 60)
             self.set_secure_cookie('session', str(user))
             return user
@@ -57,7 +58,8 @@ class SiteHandler(tornado.web.StaticFileHandler, BaseHandler):
         for urlRegex, function in routing._routesGET.items():
             urlRoute = re.fullmatch(urlRegex, "/" + path)
             if urlRoute:
-                self.compute_etag = super(tornado.web.StaticFileHandler, self).compute_etag
+                self.compute_etag = super(
+                    tornado.web.StaticFileHandler, self).compute_etag
                 function(self, path, *urlRoute.groups(), **kwargs)
                 return
         yield super().get(path, **kwargs)

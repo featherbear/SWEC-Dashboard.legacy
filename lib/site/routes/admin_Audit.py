@@ -1,13 +1,13 @@
+from tornado.escape import json_decode
+from ... import audit
+from ...jinja2_integration import BaseHandler
+from ..SiteHandler import routing
+from tornado.web import authenticated
+from tornado.escape import json_encode
 import sys
 from time import time, clock
 
 time = clock if sys.platform == 'win32' else time
-
-from tornado.escape import json_encode
-from tornado.web import authenticated
-
-from ..SiteHandler import routing
-from ...jinja2_integration import BaseHandler
 
 
 def errorJSON(errString):
@@ -24,9 +24,6 @@ def auditRedirect(self: BaseHandler, path):
 @authenticated
 def auditHome(self: BaseHandler, path):
     return self.render_jinja2("/dashboard/admin/audit.html", actionsJSON=actionMapJSON())
-
-
-from ... import audit
 
 
 class fetchIndexes:
@@ -54,9 +51,6 @@ def actionMapJSON():
     return json_encode(actionMap)
 
 
-from tornado.escape import json_decode
-
-
 @routing.POST("/dashboard/admin/audit/data.json")
 def fetchMore(self: BaseHandler, path):
     # Gets rows from the present to past
@@ -73,8 +67,8 @@ def fetchMore(self: BaseHandler, path):
         results=[dict(
             id=record[fetchIndexes.ID],
             name=record[fetchIndexes.USERNAME] if record[fetchIndexes.USER_TYPE] == "LOCAL" else (
-                    record[fetchIndexes.FIRST_NAME] + " " + record[fetchIndexes.LAST_NAME]).strip() if record[
-                                                                                                           fetchIndexes.AUTHOR] != 0 else "Admin",
+                record[fetchIndexes.FIRST_NAME] + " " + record[fetchIndexes.LAST_NAME]).strip() if record[
+                fetchIndexes.AUTHOR] != 0 else "Admin",
             action=record[fetchIndexes.ACTION],
             author=record[fetchIndexes.AUTHOR],
             data=record[fetchIndexes.DATA],

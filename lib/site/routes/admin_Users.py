@@ -1,3 +1,9 @@
+from ...auth import AUTH_TYPE, User
+from ...connectors import Database
+from ...auth import PEM
+from tornado.httputil import HTTPServerRequest
+from tornado.escape import json_decode
+from ... import audit
 from time import time
 import sys
 
@@ -22,14 +28,6 @@ def auditRedirect(self: BaseHandler, path):
 @authenticated
 def auditHome(self: BaseHandler, path):
     return self.render_jinja2("/dashboard/admin/users.html", permissionsMap=permissionsMapJSON())
-
-
-from ... import audit
-from tornado.escape import json_decode
-from tornado.httputil import HTTPServerRequest
-
-from ...auth import PEM
-from ...connectors import Database
 
 
 @routing.POST("/dashboard/admin/users/create")
@@ -61,7 +59,8 @@ def userCreate(self: BaseHandler, path):
         )
 
     if result:
-        audit.log(audit.action.USER_ADD, self.current_user, result, int(time()))
+        audit.log(audit.action.USER_ADD,
+                  self.current_user, result, int(time()))
     return self.write(json_encode(dict(status=bool(result))))
 
 
@@ -87,12 +86,10 @@ def userDelete(self: BaseHandler, path):
         """, (id,))
 
     if result:
-        audit.log(audit.action.USER_PASSWORD, self.current_user, id, int(time()))
+        audit.log(audit.action.USER_PASSWORD,
+                  self.current_user, id, int(time()))
 
     return self.write(json_encode(dict(status=bool(result))))
-
-
-from ...auth import AUTH_TYPE, User
 
 
 @routing.POST("/dashboard/admin/users/password")
@@ -131,7 +128,8 @@ def userPassword(self: BaseHandler, path):
         )
 
     if result:
-        audit.log(audit.action.USER_PASSWORD, self.current_user, id, int(time()))
+        audit.log(audit.action.USER_PASSWORD,
+                  self.current_user, id, int(time()))
     return self.write(json_encode(dict(status=bool(result))))
 
 
@@ -144,7 +142,6 @@ def userPermission(self: BaseHandler, path):
     if not self.current_user.userHasPermission(PEM.SITE_ADMIN):
         return self.write_error(403)
 
-    
     postArgs = json_decode(self.request.body)
     id = postArgs['id']
 
@@ -172,17 +169,22 @@ def userPermission(self: BaseHandler, path):
             result[0] = True
 
     try:
-        checkAndUpdate(PEM.SITE_LOGIN, audit.action.USER_ACTIVE, audit.action.USER_LOCK)
-        checkAndUpdate(PEM.SITE_ADMIN, audit.action.USER_ADMIN_PROMOTE, audit.action.USER_ADMIN_DEMOTE)
-        checkAndUpdate(PEM.NOTICE_POST, audit.action.NOTICE_CAN_POST, audit.action.NOTICE_CANNOT_POST)
-        checkAndUpdate(PEM.NOTICE_MODIFY, audit.action.NOTICE_CAN_MODIFY, audit.action.NOTICE_CANNOT_MODIFY)
+        checkAndUpdate(PEM.SITE_LOGIN, audit.action.USER_ACTIVE,
+                       audit.action.USER_LOCK)
+        checkAndUpdate(PEM.SITE_ADMIN, audit.action.USER_ADMIN_PROMOTE,
+                       audit.action.USER_ADMIN_DEMOTE)
+        checkAndUpdate(PEM.NOTICE_POST, audit.action.NOTICE_CAN_POST,
+                       audit.action.NOTICE_CANNOT_POST)
+        checkAndUpdate(PEM.NOTICE_MODIFY, audit.action.NOTICE_CAN_MODIFY,
+                       audit.action.NOTICE_CANNOT_MODIFY)
     except Exception as e:
         result[0] = False
     finally:
         return self.write(json_encode(dict(status=result[0])))
 
 
-permissionColumns = (*map(lambda obj: obj[1], Database.fetchAll("PRAGMA table_info(users)")[6:]),)
+permissionColumns = (
+    *map(lambda obj: obj[1], Database.fetchAll("PRAGMA table_info(users)")[6:]),)
 permissionsMap = dict(enumerate(permissionColumns))
 permissionsReverseMap = {}
 for key, val in permissionsMap.items():
@@ -218,7 +220,8 @@ def fetchMore(self: BaseHandler, path):
     # id userType username firstName lastName pem_login pem_noticePost, pem_noticeModify pem_siteAdmin
 
     # sort by getFullName()
-    data = sorted(dataNoPassword, key=lambda entry: User(entry[0]).getFullName())
+    data = sorted(dataNoPassword, key=lambda entry: User(
+        entry[0]).getFullName())
 
     # Start from index `start` and get `amount` records
     data = data[start:start + amount]

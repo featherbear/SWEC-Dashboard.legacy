@@ -1,3 +1,4 @@
+from ...auth import PEM
 from tornado.httputil import HTTPServerRequest
 from tornado.web import RequestHandler, authenticated
 from ...jinja2_integration import BaseHandler
@@ -27,9 +28,6 @@ def errorJSON(errString):
 @routing.GET("/dashboard/notices")
 def noticesRedirect(self: BaseHandler, path):
     return self.redirect(path + "/")
-
-
-from ...auth import PEM
 
 
 @routing.GET("/dashboard/notices/submit")
@@ -77,7 +75,8 @@ def noticesSubmit_(self: BaseHandler, path):
                                       endDate,
                                       0,
                                       )
-        audit.log(audit.action.NOTICE_SUBMIT, notice.author, notice.id, notice.added)
+        audit.log(audit.action.NOTICE_SUBMIT,
+                  notice.author, notice.id, notice.added)
     except Exception as e:
         print(e)
     finally:
@@ -163,7 +162,8 @@ def activateNotice(self: BaseHandler, path):
 
     if self.current_user.userHasPermission(PEM.NOTICE_MODIFY):
         if notices.toggleNotice(id, turnOn):
-            audit.log(audit.action.NOTICE_ACTIVATE if turnOn else audit.action.NOTICE_DEACTIVATE, self.current_user, id)
+            audit.log(
+                audit.action.NOTICE_ACTIVATE if turnOn else audit.action.NOTICE_DEACTIVATE, self.current_user, id)
             status = True
 
     return self.write(json_encode(dict(status=status)))
@@ -179,7 +179,8 @@ def fetchMore(self: BaseHandler, path):
     uid = self.current_user.id
     canManage = self.current_user.userHasPermission(PEM.NOTICE_MODIFY)
 
-    data = notices.fetch(start, amount, uid=uid, showPending=canManage, showInactive=canManage)
+    data = notices.fetch(start, amount, uid=uid,
+                         showPending=canManage, showInactive=canManage)
 
     timeTaken = time() - queryStart
 
@@ -200,8 +201,8 @@ def fetchMore(self: BaseHandler, path):
             active=int(record[fetchIndexes.ACTIVE]) == 1,
             name=record[fetchIndexes.USERNAME] if record[fetchIndexes.USER_TYPE] == "LOCAL"
                  else (record[fetchIndexes.FIRST_NAME] + " " + record[fetchIndexes.LAST_NAME]).strip()
-                       if record[fetchIndexes.AUTHOR] != 0 else "Admin",
-        ) for record in data],
+                 if record[fetchIndexes.AUTHOR] != 0 else "Admin",
+                 ) for record in data],
         count=len(data),
         generated=timeTaken,
         uid=uid,
