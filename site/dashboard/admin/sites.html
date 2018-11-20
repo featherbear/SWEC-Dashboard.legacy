@@ -4,7 +4,6 @@
 
 <link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css">
 <link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
-<link rel="stylesheet" href="/assets/css/bulma-divider.min.css" />
 <script src="/assets/js/bulma-calendar.min.js"></script>
 <link rel="stylesheet" href="/assets/css/bulma-calendar.min.css">
 {% endblock %}
@@ -25,9 +24,8 @@
                         <input class="input" type="text" placeholder="Site name" name="name" required>
                     </div>
                 </div>
-                <div class="is-divider"></div>
                 <label class="label">Options</label>
-                <div class="container"></div>
+                <div class="options"></div>
                 <a class="button is-link is-outlined">Add new replacement option</a>
             </form>
         </section>
@@ -51,7 +49,7 @@
 </div>
 <script>
     document.querySelector('#siteEdit form a.button').addEventListener('click', function () {
-        this.parentElement.querySelector('.container').appendChild(keyValElem("", ""))
+        this.parentElement.querySelector('.options').appendChild(keyValElem("", ""))
     })
 
     function keyValElem(key, value, id) {
@@ -104,7 +102,7 @@
         var form = modal.querySelector('form')
 
         // https://stackoverflow.com/a/3955238
-        var container = form.querySelector('.container')
+        var container = form.querySelector('.options')
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
@@ -303,8 +301,5 @@
     div.tile.is-ancestor .is-parent:hover article.tile.is-child:not(:hover) {
         opacity: 0.6
     }
-
-
-
 </style>
 {% endblock %}

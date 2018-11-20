@@ -28,8 +28,10 @@ if __name__ == "__main__":
         from lib.audit import auditLog_SQLCreateQuery, fetch
         Database.create_table(Database.conn, auditLog_SQLCreateQuery)
 
-        from lib.bulletin import bulletin_sites_SQLCreateQuery, bulletin_replacements_SQLCreateQuery
-        Database.create_table(Database.conn, bulletin_sites_SQLCreateQuery)
+        from lib.sites import sites_SQLCreateQuery
+        Database.create_table(Database.conn, sites_SQLCreateQuery)
+
+        from lib.bulletin import bulletin_replacements_SQLCreateQuery
         Database.create_table(Database.conn, bulletin_replacements_SQLCreateQuery)
 
     else:

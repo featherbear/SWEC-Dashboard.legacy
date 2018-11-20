@@ -18,19 +18,19 @@ def errorJSON(errString):
     return json_encode({'error': errString})
 
 
-@routing.GET("/dashboard/bulletin/manage")
+@routing.GET("/dashboard/admin/sites")
 def auditRedirect(self: BaseHandler, path):
     return self.redirect("/" + path + "/")
 
 
-@routing.GET("/dashboard/bulletin/manage/")
-@routing.GET("/dashboard/bulletin/manage/index.(?:php|html?)")
+@routing.GET("/dashboard/admin/sites/")
+@routing.GET("/dashboard/admin/sites/index.(?:php|html?)")
 @authenticated
 def auditHome(self: BaseHandler, path):
-    return self.render_jinja2("/dashboard/bulletin/manage.html")
+    return self.render_jinja2("/dashboard/admin/sites.html")
 
 
-@routing.POST("/dashboard/bulletin/manage/editSite")
+@routing.POST("/dashboard/admin/sites/edit")
 def editSite(self: BaseHandler, path):
     postArgs = json_decode(self.request.body)
 
@@ -42,7 +42,7 @@ def editSite(self: BaseHandler, path):
 
     if "id" in postArgs:
         Database.update("""
-                    UPDATE bulletin_sites
+                    UPDATE sites
                     SET name = ?
                     WHERE id = ?
                     """, (postArgs["name"], postArgs["id"]))
@@ -50,7 +50,7 @@ def editSite(self: BaseHandler, path):
         response["id"] = postArgs["id"]
     else:
         response["id"] = Database.insert("""
-        INSERT INTO bulletin_sites (name)
+        INSERT INTO sites (name)
         VALUES (?)
         """, (postArgs["name"],) )
 
@@ -80,11 +80,11 @@ def editSite(self: BaseHandler, path):
     return self.finish(json_encode(response))
 
 
-@routing.POST("/dashboard/bulletin/manage/data.json")
+@routing.POST("/dashboard/admin/sites/data.json")
 def fetchMore(self: BaseHandler, path):
     queryStart = time()
 
-    sitesSQL = Database.fetchAll("SELECT * FROM bulletin_sites")
+    sitesSQL = Database.fetchAll("SELECT * FROM sites")
     replacementsSQL = Database.fetchAll("SELECT * FROM bulletin_replacements")
 
     replacements = {}
