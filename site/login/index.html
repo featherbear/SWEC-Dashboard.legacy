@@ -6,94 +6,96 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login | SWEC Bulletin Tool</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"/>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-divider@2.0.1/dist/css/bulma-divider.min.css"/>
-    <link rel="stylesheet" type="text/css" href="login.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/bulma.min.css" />
+    <link rel="stylesheet" href="/assets/css/bulma-divider.min.css" />
+    <link rel="stylesheet" type="text/css" href="login.css" />
 </head>
 
 <body>
-<section class="hero is-success is-fullheight">
-    <div class="hero-body">
-        <div class="container has-text-centered">
-            <div class="column is-4 is-offset-4">
-                <h3 class="title has-text-grey">Login</h3>
-                <p class="subtitle has-text-grey">Please login to proceed.</p>
+    <section class="hero is-success is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="column is-4 is-offset-4">
+                    <h3 class="title has-text-grey">Login</h3>
+                    <p class="subtitle has-text-grey">Please login to proceed.</p>
 
-                <div class="notification is-warning" id="errorMessage"></div>
+                    <div class="notification is-warning" id="errorMessage"></div>
 
-                <div class="box">
-                    <div class="field" id="elvantoAuth">
-                        <div class="has-text-centered control">
-                            <a href="oauth" class="button has-addons">
-                                <span class="tag is-large"><!-- elvanto icon via CSS--></span>
-                                <span class="tag is-large is-info is-expanded">Login with Elvanto</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="is-divider" data-content="OR"></div>
-
-                    <form method="post" autocomplete="on">
-
-
-                        <div class="field">
-                            <div class="control has-icons-left">
-                                <input class="input is-medium" type="text" placeholder="Username" name="u" autofocus
-                                       required>
-                                <span class="icon is-small is-left">
-                    <i class="fas fa-user"></i>
-                  </span>
+                    <div class="box">
+                        <div class="field" id="elvantoAuth">
+                            <div class="has-text-centered control">
+                                <a href="oauth" class="button has-addons">
+                                    <span class="tag is-large">
+                                        <!-- elvanto icon via CSS--></span>
+                                    <span class="tag is-large is-info is-expanded">Login with Elvanto</span>
+                                </a>
                             </div>
                         </div>
+                        <div class="is-divider" data-content="OR"></div>
 
-                        <div class="field">
-                            <div class="control has-icons-left">
-                                <input class="input is-medium" type="password" name="p" placeholder="Password" required>
-                                <span class="icon is-small is-left">
-                    <i class="fas fa-lock"></i>
-                  </span>
+                        <form method="post" autocomplete="on">
+
+
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input class="input is-medium" type="text" placeholder="Username" name="u"
+                                        autofocus required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <input type="hidden" name="next"/>
 
-                        <button class="button is-block is-info is-medium is-fullwidth" type="submit">Login</button>
-                    </form>
-                    <!-- </div>
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input class="input is-medium" type="password" name="p" placeholder="Password"
+                                        required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" name="next" />
+
+                            <button class="button is-block is-info is-medium is-fullwidth" type="submit">Login</button>
+                        </form>
+                        <!-- </div>
                             <p class="has-text-grey">
                                 <a href="../">Sign Up</a> &nbsp;·&nbsp;
                                 <a href="../">Forgot Password</a> &nbsp;·&nbsp;
                                 <a href="../">Need Help?</a>
                             </p>
                         </div>  -->
+                    </div>
                 </div>
-            </div>
-</section>
-<script async type="text/javascript" src="/assets/js/bulma.js"></script>
-<script type="text/javascript">
-    let __data = {}
-    location.search.substr(1).split(/(?:[^\\])&/).forEach(function (keyPair) {
-        keyPair = keyPair.split(/=(.+)/)
-        __data[keyPair[0]] = decodeURI(keyPair[1])
-    })
+    </section>
+    <script async type="text/javascript" src="/assets/js/bulma.js"></script>
+    <script type="text/javascript">
+        let __data = {}
+        location.search.substr(1).split(/(?:[^\\])&/).forEach(function (keyPair) {
+            keyPair = keyPair.split(/=(.+)/)
+            __data[keyPair[0]] = decodeURI(keyPair[1])
+        })
 
-    if (__data.hasOwnProperty("error")) {
+        if (__data.hasOwnProperty("error")) {
 
-        var message;
-        switch (__data["error"]) {
-            case "locked":
-                message = "Account is locked"
-                break
-            case "badauth":
-                message = "Incorrect username/password"
-                break
-            default:
-                message = "Something went wrong..."
+            var message;
+            switch (__data["error"]) {
+                case "locked":
+                    message = "Account is locked"
+                    break
+                case "badauth":
+                    message = "Incorrect username/password"
+                    break
+                default:
+                    message = "Something went wrong..."
+            }
+            document.getElementById('errorMessage').innerText = message
+            document.getElementById('errorMessage').style.display = "block"
         }
-        document.getElementById('errorMessage').innerText = message
-        document.getElementById('errorMessage').style.display = "block"
-    }
-</script>
+    </script>
 
 </body>
 
