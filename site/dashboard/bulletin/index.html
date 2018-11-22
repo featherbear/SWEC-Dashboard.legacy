@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>A4 landscape</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500|Open+Sans:300,400" rel="stylesheet">
+
+
+    <style>
+        .font-normal {
+            font-weight: lighter;
+        }
+
+        em {
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        #notices {
+            overflow-y: hidden;
+        }
+
+        #notices p {
+            white-space: pre;
+        }
+
+        .title,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 11px;
+            /* font-weight: lighter; */
+        }
+
+        h3 {}
+
+        h4 {
+            font-weight: 500; 
+        }
+
+        h5 {
+            font-weight: normal;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .no-margin-bottom {
+            margin-bottom: 0;
+        }
+
+        .no-margin-vertical {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        * {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: lighter;
+            font-size: 11px;
+        }
+
+        p {
+            line-height: normal
+        }
+
+        .flexContainer {
+            display: flex;
+        }
+
+        .flexVertical {
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .flexColumn {
+            flex: 1;
+        }
+
+        .flexRow {
+            flex: 1;
+        }
+
+        .text-centre {
+            text-align: center;
+        }
+
+        .sheet {
+            width: 297mm;
+            height: 209mm
+        }
+
+        .sheet .page {
+            padding: 10mm;
+        }
+
+        @page {
+            margin: 0
+        }
+
+        body {
+            margin: 0
+        }
+
+        .sheet {
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+
+        /** For screen preview **/
+        @media screen {
+            body {
+                background: #e0e0e0
+            }
+
+            .sheet {
+                background: white;
+                box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);
+                margin: 5mm auto;
+            }
+        }
+
+        /** Fix for Chrome issue #273306 **/
+        @media print {
+            body.A4.landscape {
+                width: 297mm
+            }
+        }
+
+        @page {
+            size: A4 landscape
+        }
+
+        #pastoralTeam {
+            background-color: #A7A7A7;
+        }
+    </style>
+
+    <style>
+        /* #offertory .text-centre:not(:last-child) {
+            border-top: 1px solid purple;
+            border-right: 1px solid purple;
+            margin-top: -1px;
+            margin-right: -1px;
+        }
+         */
+        #offertory>.flexContainer>.flexColumn {
+            padding: 0 5px;
+        }
+
+        #offertory .month {
+            border-right: 1px solid black;
+            margin-right: -1px;
+        }
+
+
+
+        a {
+            color: unset;
+            text-decoration: unset;
+        }
+
+        #social div {
+            padding: 0.3em 0;
+        }
+
+        .icon::before {
+            content: '';
+            display: block;
+            height: 1.5em;
+            width: 1.5em;
+            float: left;
+            margin-right: 0.3em;
+            transform: translateY(-0.1em)
+        }
+
+        .icon-facebook::before {
+
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><path d="M134.3 225v-67.1h-22.5v-26.7h22.5v-21c0-22.8 13.9-35.2 34.3-35.2 9.8 0 18.1.7 20.6 1.1v23.8h-14.1c-11.1 0-13.2 5.3-13.2 13v18.4h25l-3.4 26.7h-21.6v67"/><circle cx="150.5" cy="150" r="128.5" fill="none" stroke="#000" stroke-width="15" stroke-miterlimit="10"/></svg>');
+        }
+
+        .icon-mail::before {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><circle cx="150.5" cy="150" r="128.5" fill="none" stroke="#000" stroke-width="15" stroke-miterlimit="10"/><path d="M232.6 128.3c1.3-1 3.2-.1 3.2 1.6V198c0 8.8-7.2 16-16 16H81.2c-8.8 0-16-7.2-16-16v-68.1c0-1.7 1.9-2.6 3.2-1.6 7.5 5.8 17.4 13.2 51.4 37.9 7 5.1 18.9 15.9 30.7 15.9 11.9.1 24-10.9 30.8-15.9 34-24.7 43.8-32.1 51.3-37.9zm-82.1 43c7.7.1 18.9-9.7 24.5-13.8 44.2-32.1 47.6-34.9 57.8-42.9 1.9-1.5 3.1-3.8 3.1-6.3V102c0-8.8-7.2-16-16-16H81.2c-8.8 0-16 7.2-16 16v6.3c0 2.5 1.1 4.8 3.1 6.3 10.2 8 13.6 10.8 57.8 42.9 5.5 4.1 16.7 14 24.4 13.8z"/></svg>');
+        }
+
+        .icon-instagram::before {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><path d="M150 112c-21.3 0-38.5 17.2-38.5 38.5S128.7 189 150 189s38.5-17.2 38.5-38.5S171.3 112 150 112zm0 63.5c-13.8 0-25-11.2-25-25s11.2-25 25-25 25 11.2 25 25-11.2 25-25 25zm49-65c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9zm25.5 9.1c-.6-12-3.3-22.7-12.1-31.4-8.8-8.8-19.4-11.5-31.4-12.1-12.4-.7-49.5-.7-61.9 0-12 .6-22.6 3.3-31.4 12.1s-11.5 19.4-12.1 31.4c-.7 12.4-.7 49.5 0 61.9.6 12 3.3 22.7 12.1 31.4s19.4 11.5 31.4 12.1c12.4.7 49.5.7 61.9 0 12-.6 22.7-3.3 31.4-12.1 8.8-8.8 11.5-19.4 12.1-31.4.7-12.5.7-49.5 0-61.9zm-16 75.1c-2.6 6.6-7.7 11.6-14.3 14.3-9.9 3.9-33.3 3-44.2 3s-34.4.9-44.2-3c-6.6-2.6-11.6-7.7-14.3-14.3-3.9-9.9-3-33.3-3-44.2s-.9-34.4 3-44.2c2.6-6.6 7.7-11.6 14.3-14.3 9.9-3.9 33.3-3 44.2-3s34.4-.9 44.2 3c6.6 2.6 11.6 7.7 14.3 14.3 3.9 9.9 3 33.3 3 44.2s.9 34.4-3 44.2z"/><circle cx="150.5" cy="150" r="128.5" fill="none" stroke="#000" stroke-width="15" stroke-miterlimit="10"/></svg>');
+        }
+    </style>
+
+    <style>
+        #logo {
+            text-align: center;
+            width: 100%;
+            max-height: 180px;
+            margin-top: -5px;
+        }
+
+        #header {
+            padding-bottom: 10px;
+            margin-bottom: -1px;
+            border-bottom: 1px solid black;
+        }
+
+
+        .confession {
+            white-space: pre;
+        }
+    </style>
+
+    <style>
+        .indent1 {
+            margin-left: 1rem;
+        }
+
+        .indent2 {
+            margin-left: 2rem;
+        }
+
+        .indent3 {
+            margin-left: 3rem;
+        }
+    </style>
+</head>
+
+<body class="A4 landscape">
+
+    <div class="sheet flexContainer">
+        <div class="page flexColumn">
+            <div class="flexContainer flexVertical">
+                <section id="notices" class="flexRow">
+                    <h1 class="no-margin-vertical">Church News</h1>
+                    {% for notice in notices %}
+                    <div>
+                        <h5 class="no-margin-bottom">{{notice[0]|e}}</h5>
+                        <p class="no-margin-vertical">{{notice[1]|e}}</p>
+                    </div>
+                    {% endfor %}
+                </section>
+
+                <div>
+                    {% if offertory %}
+                    <section id="offertory">
+                        <h1>Offertory Update</h1>
+                        <div class="flexContainer">
+                            <div class="flexColumn month text-centre">
+                                <h4 class="no-margin-vertical">{{offertory.month.name}}</h4>
+                                <div class="flexContainer">
+                                    <h5 class="flexColumn no-margin-vertical">Actual</h5>
+                                    <h5 class="flexColumn no-margin-vertical">Budget</h5>
+                                    <h5 class="flexColumn no-margin-vertical">Difference</h5>
+                                </div>
+                                <div class="flexContainer">
+                                    <div class="flexColumn">{{"${:,}".format(offertory.month.actual)}}</div>
+                                    <div class="flexColumn">{{"${:,}".format(offertory.month.budget)}}</div>
+                                    {% set difference = offertory.month.actual - offertory.month.budget %}
+                                    <div class="flexColumn">
+                                        {{
+                                        ("${:,}".format(difference) if difference > 0 else
+                                        "(${:,})".format(-difference) ) if difference else "-"
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flexColumn ytd text-centre">
+                                <h4 class="no-margin-vertical">Year To Date</h4>
+                                <div class="flexContainer">
+                                    <h5 class="flexColumn no-margin-vertical">Actual</h5>
+                                    <h5 class="flexColumn no-margin-vertical">Budget</h5>
+                                    <h5 class="flexColumn no-margin-vertical">Difference</h5>
+                                </div>
+                                <div class="flexContainer">
+                                    <div class="flexColumn">{{"${:,}".format(offertory.ytd.actual)}}</div>
+                                    <div class="flexColumn">{{"${:,}".format(offertory.ytd.budget)}}</div>
+                                    {% set difference = offertory.ytd.actual - offertory.ytd.budget %}
+                                    <div class="flexColumn">{{ ("${:,}".format(difference) if difference >
+                                        0
+                                        else
+                                        "(${:,})".format(-difference) ) if difference else "-" }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </section>
+                    {% endif %}
+
+                    <div class="flexContainer">
+                        <section class="flexColumn" id="events">
+                            <h1>Upcoming Events</h1>
+                        </section>
+                        <section id="social" class="flexColumn" style="flex-grow: 0; min-width: 205px;">
+                            <h1>Stay Connected</h1>
+                            <div><i class="icon icon-facebook"></i><a href="//fb.com/swechurch">fb.com/swechurch</a></div>
+                            <div><i class="icon icon-instagram"></i><a href="//instagram.com/swechurch">@swechurch</a></div>
+                            <div><i class="icon icon-mail"></i><a href="//swec.org.au/newsletter">swec.org.au/newsletter</a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="page flexColumn">
+            <div class="flexContainer flexVertical">
+                <section id="header">
+                    <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1118.87 538.43">
+                        <style>
+                            path {
+                                fill: #272727
+                            }
+                        </style>
+                        <path d="M163.71 57.56s33.01 63.37-39.73 147.25c-22.17 25.57-96.35 98.71-97.44 165.27-.32 19.28.83 79.26 95.18 122.39 2.01-14.99-5.16-54.08 53.15-126.38 26.19-31.78 138.72-138.77-11.16-308.53z" />
+                        <path d="M154.78 83.19s-15.33-20.85 1.58-64.56c-13.08 13.85-49.18 52.03-1.58 64.56zM142.49 513.26s-6.15-61.52 53.35-131.13c59.49-69.62 57.76-97.7 57.76-101.16 0-3.46 35.46 97.89 9.3 149.85-19.24 34.23-56.56 48.8-75.55 58.16-18.99 9.36-44.86 24.28-44.86 24.28z" />
+                        <g>
+                            <path d="M365.71 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM475.23 198.45c0 17.61-14.48 31.56-32.72 31.56-18.33 0-32.81-13.95-32.81-31.56s14.48-31.47 32.81-31.47c18.24 0 32.72 13.86 32.72 31.47zm-58.29 0c0 13.86 11.62 25.04 25.57 25.04s25.39-11.18 25.39-25.04-11.44-24.86-25.39-24.86-25.57 11-25.57 24.86zM526.65 223.49c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15V204c0 16.36-9.84 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15V204c.01 12.33 7.35 19.49 19.24 19.49zM623.3 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM654.24 167.16v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM748.75 200.15v5.1h-21.01v-5.1h21.01zM776.2 167.16l17.17 54.54 16.99-54.54h7.15l17.17 54.54 16.99-54.54h7.42l-21.01 62.59h-7.33l-16.9-53.02-17.08 53.02h-7.33l-20.92-62.59h7.68zM924.27 167.16v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62H881.8v-62.59h42.47zM971.57 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM1060.98 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM390.03 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM417.92 274.45l21.55 54.54 21.64-54.54h7.51l-25.57 62.59h-7.42l-25.39-62.59h7.68zM527.45 321.04h-34.06l-6.97 16h-7.6l28.07-62.59h7.42l27.99 62.59h-7.78l-7.07-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM572.96 274.45l37.55 50.88v-50.88h7.06v62.59h-7.33l-37.55-50.79v50.79h-7.15v-62.59h7.42zM693.67 306.46h6.35v22.71c-6.17 4.92-14.84 8.14-23.25 8.14-18.15 0-32.64-13.95-32.64-31.56s14.57-31.47 32.99-31.47c8.67 0 17.08 3.31 23.07 8.58l-4.11 5.19c-5.1-4.56-11.98-7.24-18.96-7.24-14.31 0-25.75 11.09-25.75 24.95 0 13.95 11.53 25.04 25.84 25.04 5.63 0 11.62-1.97 16.45-5.27v-19.07zM773.25 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM809.55 274.45v55.97H837v6.62h-34.6v-62.59h7.15zM869.19 274.45v62.59h-7.15v-62.59h7.15zM928.38 280.8c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.89 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.49-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM1016.81 321.04h-34.07l-6.97 16h-7.6l28.08-62.59h7.42l27.98 62.59h-7.78l-7.06-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM1062.05 274.45v55.97h27.45v6.62h-34.6v-62.59h7.15zM374.38 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM430.71 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM532.91 438.08c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15v36.84c0 16.36-9.83 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15v36.84c.01 12.33 7.35 19.49 19.24 19.49zM630.99 444.34l-13.14-20.03c-1.25.09-2.59.18-4.02.18H597.2v19.85h-7.15v-62.59h23.78c15.65 0 24.68 7.69 24.68 21.01 0 10.28-5.1 17.35-14.13 20.21l14.75 21.37h-8.14zm-17.17-26.47c11.35 0 17.79-5.1 17.79-14.93 0-9.57-6.44-14.57-17.79-14.57h-16.63v29.5h16.63zM694.92 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.58 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.62-7.8-18.51-7.8zM751.25 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15z" />
+                        </g>
+                    </svg>
+                    <h4 class="text-centre no-margin-vertical">{{ADDMMYYYY}} | {{serviceName|e}} | www.swec.org.au</h4>
+                    <h5 class="text-centre no-margin-vertical">Pastor {{contactName|e}} | {{contactPhone|e}} | {{contactEmail|e}}</h5>
+                </section>
+                <section id="serviceInfo" class="flexRow indent1">
+                    <h4>What we'll be doing during our time together</h4>
+                    <h4 class="no-margin-bottom">1. Worship</h4>
+                    <p class="no-margin-vertical">We'll be worshipping God through song, prayer and by hearing His
+                        word.</p>
+                    <div class="indent1">
+                        <h5 class="no-margin-vertical">Today's confession prayer</h5>
+                        <p class="confession indent1 no-margin-vertical">{{confession|e}}</p>
+                        <h5 class="no-margin-vertical">Bible reading - <span class="font-normal">{{bibleGospelPassage|e}}</span></h5>
+                    </div>
+
+                    <h4 class="no-margin-vertical">2. Community</h4>
+                    <p class="no-margin-vertical">An opportunity to get updated with what's happening at SWEC!</p>
+
+                    <h4 class="no-margin-vertical">3. Prayer</h4>
+                    <p class="no-margin-vertical">We'll be praying for various needs in our church, the wider
+                        community, and the world.</p>
+
+                    <h4 class="no-margin-vertical">4. God's Word</h4>
+                    <p class="no-margin-vertical">Today's sermon will be given by {{speaker|e}}</p>
+
+                    <h4 class="no-margin-vertical">5. Response</h4>
+                    <p class="no-margin-vertical">An opportunity for us to respond by singing, through holy communion,
+                        and by financial giving</p>
+
+                    <h4 class="no-margin-vertical">6. Blessing and Sending</h4>
+                    <p class="no-margin-vertical">Go with God's blessing to love and serve Him and the world</p>
+                </section>
+                <section id="pastoralTeam" class="text-centre flexContainer">
+                    <div class="flexColumn">
+                        <h4 class="no-margin-bottom">Pastoral Team</h4>
+                        <div>Peter Ko (Lead Pastor)</div>
+                        <div>Stephen Fei</div>
+                        <div>Marshall Scott</div>
+                        <div>Dom Cheung</div>
+                        <div>Karen Ko</div>
+                    </div>
+                    <div class="flexColumn">
+                        <h4 class="no-margin-bottom">Elders</h4>
+                        <div>Johnson Lee</div>
+                        <div>Andrew Lim</div>
+                        <div>Kirby Wong</div>
+                        <div>Nelson Siu</div>
+
+                        <p><a href="mailto:board@swec.org.au"><i>board@swec.org.au</i></a></p>
+                    </div>
+                    <div class="flexColumn">
+                        <h4 class="no-margin-bottom">Student Pastors</h4>
+                        <div>Andrew Hayes</div>
+                        <div>James Hoey</div>
+                        <h4 class="no-margin-bottom">Ministry Intern</h4>
+                        <div>Lisa Truong</div>
+                    </div>
+                    <section>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+<script>
+    /*
+
+    function addScript(url, cb) {
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = url;
+    document.head.appendChild(script);
+    script.onload = cb
+}
+addScript('https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js', function(){
+html2pdf().set({
+    margin: 0,
+    filename: 'myfile.pdf',
+    // image: { type: 'jpg', quality: 1 },
+    // html2canvas: { scale: 1 },
+  pagebreak: { mode: 'avoid-all', before: '#page2el' },
+
+    jsPDF: {
+        unit: 'pt',
+        format: 'a4',
+        orientation: 'landscape'
+    }
+}).from(document.querySelector('body .sheet')).save()
+})
+
+     */
+
+
+</script>
+
+</html>
