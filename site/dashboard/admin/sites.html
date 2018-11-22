@@ -91,6 +91,12 @@
         field_body.__defineGetter__('key', function () { return this.querySelector('input[name=key]').value })
         field_body.__defineGetter__('value', function () { return this.querySelector('input[name=value').value })
 
+        // <a class="delete"></a>
+        // delBtn = document.createElement('a')
+        // delBtn.classList.add("button", "is-danger", "is-outlined")
+        // delBtn.innerText="\u2717"
+        // field_body.appendChild(delBtn)
+
         return field_body
     }
 
@@ -141,7 +147,7 @@
                 return
             }
 
-            fetch('editSite', {
+            fetch('edit', {
                 method: 'post',
                 body: JSON.stringify(request)
             })
