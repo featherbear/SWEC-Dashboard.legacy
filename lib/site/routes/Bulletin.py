@@ -23,15 +23,18 @@ def bulletinRedirect(self: BaseHandler, path):
 @authenticated
 def bulletinHome(self: BaseHandler, path):
     noticesSQL = Database.fetchAll("""
-    SELECT title, description
-    FROM notices
+    SELECT notices.title, notices.description
+    FROM notices, bulletin_notices
     WHERE
-            active = 1 
-        AND approved = 1 
-        AND strftime('%s', substr(date, 7, 4)||'-'||substr(date, 4, 2)||'-'||substr(date, 1, 2)) <= strftime('%s', date('now'))
-        AND strftime('%s', substr(endDate, 7, 4)||'-'||substr(endDate, 4, 2)||'-'||substr(endDate, 1, 2)) >= strftime('%s', date('now'))
+        notices.id = bulletin_notices.notice
+        
+        AND notices.active = 1 
+        AND notices.approved = 1 
+        AND strftime('%s', DMYtoYMD(notices.date)) <= strftime('%s', date('now'))
+        AND strftime('%s', DMYtoYMD(notices.endDate)) >= strftime('%s', date('now'))
     ORDER BY priority DESC, date DESC
     """)
+    # AND bulletin_notices.site = 
     # date <= now <= endDate
     replacementsSQL = Database.fetchAll("""
     SELECT key, value

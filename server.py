@@ -31,8 +31,9 @@ if __name__ == "__main__":
         from lib.sites import sites_SQLCreateQuery
         Database.create_table(Database.conn, sites_SQLCreateQuery)
 
-        from lib.bulletin import bulletin_replacements_SQLCreateQuery
+        from lib.bulletin import bulletin_replacements_SQLCreateQuery, bulletin_notices_SQLCreateQuery
         Database.create_table(Database.conn, bulletin_replacements_SQLCreateQuery)
+        Database.create_table(Database.conn, bulletin_notices_SQLCreateQuery)
 
     else:
         raise Exception("Cannot create the database connection.")

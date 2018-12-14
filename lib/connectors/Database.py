@@ -45,14 +45,19 @@ def fetchAll(*args, **kwargs):
 def insert(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args, **kwargs)
-    conn.commit()
+    if kwargs.get('commit'): conn.commit()
     return c.lastrowid
 
 def update(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args, **kwargs)
-    conn.commit()
+    if kwargs.get('commit'): conn.commit()
     return c.rowcount
 
 
 conn = create_connection("data.sqlite")
+
+def ddmmyyyyToyyyymmdd(ddmmyyyy):
+    # converts DD/MM/YYYY to YYYY-MM-DD
+    return "-".join(ddmmyyyy.split("/")[::-1])
+conn.create_function("DMYtoYMD", 1, ddmmyyyyToyyyymmdd)

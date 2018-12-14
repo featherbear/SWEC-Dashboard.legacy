@@ -4,13 +4,13 @@ from tornado.web import RequestHandler, authenticated
 from ...jinja2_integration import BaseHandler
 from ..SiteHandler import routing
 from ... import notices, audit
+
 from time import time
 from tornado.escape import json_encode, json_decode, xhtml_escape
 
 
 def errorJSON(errString):
     return json_encode({'error': errString})
-
 
 # @routing.POST("/notices/action/get")
 # @authenticated
@@ -98,6 +98,7 @@ class fetchIndexes:
     USERNAME = 11
     FIRST_NAME = 12
     LAST_NAME = 13
+    # SITES = 14
 
 
 @routing.POST("/dashboard/notices/approve")
@@ -122,16 +123,17 @@ def editNotice(self: BaseHandler, path):
 
     id = postArgs.get('id')
     data = dict(
-        title=postArgs.get('title', None),
-        description=postArgs.get('description', None),
+        title=postArgs.get('title'),
+        description=postArgs.get('description'),
         date=postArgs.get('startDate'),
-        endDate=postArgs.get('endDate', None),
+        endDate=postArgs.get('endDate'),
     )
+
 
     if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
             notices.getNotice(id).author == self.current_user.id]):
 
-        if notices.editNotice(id, data):
+        if notices.editNotice(id, data, sites=postArgs.get('sites')):
             audit.log(audit.action.NOTICE_EDIT, self.current_user, id)
             status = True
     return self.write(json_encode(dict(status=status)))
@@ -169,6 +171,10 @@ def activateNotice(self: BaseHandler, path):
     return self.write(json_encode(dict(status=status)))
 
 
+
+from ... import sites , bulletin ### ### ### ###
+
+
 @routing.POST("/dashboard/notices/data.json")
 def fetchMore(self: BaseHandler, path):
     postArgs = json_decode(self.request.body)
@@ -181,6 +187,9 @@ def fetchMore(self: BaseHandler, path):
 
     data = notices.fetch(start, amount, uid=uid,
                          showPending=canManage, showInactive=canManage)
+    
+
+    noticesSiteMap = bulletin.getSitesMatchingNotice()
 
     timeTaken = time() - queryStart
 
@@ -195,6 +204,7 @@ def fetchMore(self: BaseHandler, path):
             endDate=record[fetchIndexes.END_DATE],
 
             priority=record[fetchIndexes.PRIORITY],
+            sites = noticesSiteMap.get(record[fetchIndexes.ID]),
 
             added=record[fetchIndexes.ADDED],
             approved=int(record[fetchIndexes.APPROVED]) == 1,
@@ -203,6 +213,7 @@ def fetchMore(self: BaseHandler, path):
                  else (record[fetchIndexes.FIRST_NAME] + " " + record[fetchIndexes.LAST_NAME]).strip()
                  if record[fetchIndexes.AUTHOR] != 0 else "Admin",
                  ) for record in data],
+        sites = sites.getSites(),
         count=len(data),
         generated=timeTaken,
         uid=uid,
