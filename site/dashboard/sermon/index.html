@@ -1,0 +1,273 @@
+{% extends "/dropins/site.html" %}
+{% block head %}
+<script type="text/javascript" src="/assets/js/moment.min.js"></script>
+{% endblock %}
+{% block content %}
+
+
+<div id="editModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Editing sermon: <span name="service"></span> - <span
+                    name="date"></span></p>
+        </header>
+
+        <section class="modal-card-body">
+            <form>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Title</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" name="title" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Passage</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" name="passage" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Speaker</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" name="speaker" type="text"
+                                       placeholder="Do not include last name for guest speakers" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Outline</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <textarea class="textarea" name="outline"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </section>
+
+
+        <footer class="modal-card-foot field is-grouped is-grouped-right">
+            <p class="control">
+                <button class="button is-success confirm">Save</button>
+            </p>
+            <p class="control">
+                <button class="button cancel">Cancel</button>
+            </p>
+
+        </footer>
+
+
+    </div>
+</div>
+
+
+<table class="table is-striped is-hoverable is-fullwidth">
+
+    <tbody>
+
+    </tbody>
+    <tfoot>
+    <tr>
+        <th colspan="2"><a onclick="document.getElementsByClassName('modal')[0].classList.add('is-active')">Load
+            more...</a></th>
+    </tr>
+    </tfoot>
+</table>
+<script>
+    function openModalEdit(sermonID, srcElem) {
+        let modal = document.getElementById('editModal');
+
+        let isNew = sermonID === undefined;
+        if (isNew) {
+            modal.querySelector('[name=service]').innerText = services[parseInt(srcElem.getAttribute('site'))];
+            modal.querySelector('[name=date]').innerText = formatDate(new Date(srcElem.getAttribute('date')));
+        } else {
+            let data = sermons[sermonID];
+            modal.querySelector('[name=service]').innerText = services[data.service];
+            modal.querySelector('[name=date]').innerText = formatDate(data.date);
+            modal.querySelector('[name=title]').value = data.title;
+            modal.querySelector('[name=passage]').value = data.passage;
+            modal.querySelector('[name=speaker]').value = data.speaker;
+            modal.querySelector('[name=outline]').value = data.outline;
+        }
+
+        const confirmEvent = function (evt) {
+            evt.preventDefault();
+
+            if (!modal.querySelector('form').reportValidity()) return;
+
+            this.classList.add('is-loading');
+
+            let meta = {};
+            if (sermonID === undefined) {
+                meta.site = srcElem.getAttribute('service');
+                meta.date = srcElem.getAttribute('date');
+            } else {
+                meta.id = sermonID;
+            }
+            fetch("edit", {
+                method: 'post',
+                body: JSON.stringify({
+                    ...meta,
+                    title: modal.querySelector('[name=title]').value,
+                    passage: modal.querySelector('[name=passage]').value,
+                    speaker: modal.querySelector('[name=speaker]').value,
+                    outline: modal.querySelector('[name=outline]').value,
+                })
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    this.classList.remove('is-loading');
+                    if (jsonData.status) {
+                        location.href = "."
+                    }
+                })
+        };
+
+        const closeModal = function () {
+            modal.querySelector('button.confirm').removeEventListener('click', confirmEvent);
+            modal.querySelector('button.cancel').removeEventListener('click', cancelEvent);
+            modal.querySelector('.modal-background').removeEventListener('click', cancelEvent);
+            modal.classList.remove('is-active');
+        };
+
+        const cancelEvent = closeModal;
+
+        modal.querySelector('button.confirm').addEventListener('click', confirmEvent);
+        modal.querySelector('button.cancel').addEventListener('click', cancelEvent);
+        modal.querySelector('.modal-background').addEventListener('click', cancelEvent);
+        modal.classList.add('is-active');
+    }
+
+</script>
+<script>
+    let summaryDataFor = function (dataID) {
+        let data = sermons[dataID];
+        return `${data.title} // ${data.passage} (${services[data.service]} - ${formatDate(data.date)})`;
+    };
+
+    let formatDate = function (date) {
+        return moment(date).format("D MMM, YYYY");
+    };
+
+
+    let dataToRow = function (dataID) {
+        let row = document.createElement('tr');
+
+        let summary = document.createElement('td');
+        summary.innerText = summaryDataFor(dataID);
+        row.appendChild(summary)
+
+        let edit = document.createElement('td');
+        let editBtn = document.createElement('button');
+        editBtn.innerText = "edit";
+        editBtn.classList.add('button', 'is-outlined', "is-info");
+        edit.appendChild(editBtn);
+        editBtn.addEventListener('click', evt => {
+            openModalEdit(dataID, row)
+        });
+        row.appendChild(edit);
+
+        return row;
+    }
+
+    let services = {}
+    fetch('/dashboard/sites.json', {
+        method: 'post'
+    }).then(response => response.json())
+        .then(jsonData => {
+            services = jsonData;
+
+
+            var nextSunday = new Date();
+            nextSunday.setDate(nextSunday.getDate() + ((7 - nextSunday.getDay())));
+            nextSunday_str = moment(nextSunday).format("YYYY-MM-DD");
+
+            for (var service in services) {
+                let row = document.createElement('tr');
+                let td = document.createElement('td');
+                td.colSpan = 2;
+                // if (sermons.filter(sermon => sermon.date === nextSunday_str && sermon.site === service).length !== 0) continue;
+
+                row.setAttribute('date', nextSunday_str);
+                row.setAttribute('site', service);
+
+                td.innerText = `Create sermon outline for ${services[service]} - ${formatDate(nextSunday)}`;
+                row.addEventListener('click', () => openModalEdit(undefined, row));
+
+                row.appendChild(td);
+                document.querySelector("table tbody").appendChild(row);
+            }
+        });
+
+    let sermons = {};
+
+
+    var nextID = undefined;
+    (getMore = function () {
+        fetch('data.json', {
+            method: 'post',
+            body: JSON.stringify({startIndex: nextID})
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+
+                // var time = jsonData.generated
+                for (var data of jsonData.results) {
+                    console.log(data)
+                    if (!sermons.hasOwnProperty(data.id)) {
+                        sermons[data.id] = {
+                            service: data.site,
+                            date: data.date,
+                            title: data.title,
+                            passage: data.passage,
+                            speaker: data.speaker,
+                            outline: data.outline
+                        };
+                        document.querySelector("table tbody").appendChild(dataToRow(data.id));
+                    }
+                }
+
+                nextID = jsonData.nextRow
+                if (jsonData.count == 0 || nextID == -1) {
+                    // no more data, hide / disable fetch more rows
+                    document.querySelector('table tfoot').style.display = "none"
+                }
+
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })()
+</script>
+{% endblock %}

@@ -5,39 +5,46 @@ from lib.api import APIHandler
 from lib.connectors import ElvantoAuth
 from lib.site import SiteHandler
 
-if __name__ == "__main__":
-    app = tornado.web.Application([
-        ("/api(/.*)?", APIHandler),
-        ("/login/oauth", ElvantoAuth),
-        ("/(.*)", SiteHandler),
-    ],
-        cookie_secret="ABC",
-        # xsrf_cookies = True,
-        login_url="/login/"
-    )
+app = tornado.web.Application([
+    ("/api(/.*)?", APIHandler),
+    ("/login/oauth", ElvantoAuth),
+    ("/(.*)", SiteHandler),
+],
+    cookie_secret = "ABC",
+    # xsrf_cookies = True,
+    login_url = "/login/"
+)
 
-    from lib.connectors import Database
+from lib.connectors import Database
 
-    if Database.conn is not None:
-        from lib.auth import UserSession
-        Database.create_table(Database.conn, UserSession.SQLCreateQuery)
+if Database.conn is not None:
+    from lib.auth import UserSession
 
-        from lib.notices import Notice
-        Database.create_table(Database.conn, Notice.SQLCreateQuery)
+    Database.create_table(Database.conn, UserSession.SQLCreateQuery)
 
-        from lib.audit import auditLog_SQLCreateQuery, fetch
-        Database.create_table(Database.conn, auditLog_SQLCreateQuery)
+    from lib.notices import Notice
 
-        from lib.sites import sites_SQLCreateQuery
-        Database.create_table(Database.conn, sites_SQLCreateQuery)
+    Database.create_table(Database.conn, Notice.SQLCreateQuery)
 
-        from lib.bulletin import bulletin_replacements_SQLCreateQuery, bulletin_notices_SQLCreateQuery
-        Database.create_table(Database.conn, bulletin_replacements_SQLCreateQuery)
-        Database.create_table(Database.conn, bulletin_notices_SQLCreateQuery)
+    from lib.audit import auditLog_SQLCreateQuery
 
-    else:
-        raise Exception("Cannot create the database connection.")
+    Database.create_table(Database.conn, auditLog_SQLCreateQuery)
 
-    app.listen(58388)
+    from lib.sites import sites_SQLCreateQuery, sites_data_SQLCreateQuery
 
-    tornado.ioloop.IOLoop.current().start()
+    Database.create_table(Database.conn, sites_SQLCreateQuery)
+    Database.create_table(Database.conn, sites_data_SQLCreateQuery)
+
+    from lib.notices_link import notices_link_SQLCreateQuery
+    Database.create_table(Database.conn, notices_link_SQLCreateQuery)
+
+    from lib.sermons import sermons_SQLCreateQuery
+    Database.create_table(Database.conn, sermons_SQLCreateQuery)
+
+
+else:
+    raise Exception("Cannot create the database connection.")
+
+app.listen(58388)
+
+tornado.ioloop.IOLoop.current().start()

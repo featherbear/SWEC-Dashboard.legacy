@@ -40,7 +40,7 @@ class routing:
 
 class SiteHandler(tornado.web.StaticFileHandler, BaseHandler):
     def initialize(self, **kwargs):
-        super().initialize("site/", default_filename="index.html")
+        super().initialize("site/", default_filename = "index.html")
 
     def get_current_user(self):
         try:

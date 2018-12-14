@@ -14,7 +14,7 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">User Edit - <span class="data-name"></span></p>
-            <button class="button is-danger is-outlined">Delete</button>
+            <!--<button class="button is-danger is-outlined">Delete</button>-->
 
         </header>
         <section class="modal-card-body">
@@ -22,7 +22,7 @@
                 <div>User ID: <span class="data-id"></span></div>
                 <div>User Type: <span class="data-type"></span></div>
                 <div>Username: <span class="data-username"></span></div>
-                <div>Password: <span class="button is-warning is-small">Change password</span></div>
+                <!--<div>Password: <span class="button is-warning is-small">Change password</span></div>-->
 
                 <div class="label">Permissions</div>
                 <script type="text/javascript">
@@ -78,14 +78,18 @@
         modal.querySelector('.data-name').innerText = elem.getAttribute("data-name")
         modal.querySelector('.data-id').innerText = elem.getAttribute("data-id")
         modal.querySelector('.data-type').innerText = elem.getAttribute("data-type")
+
+        modal.querySelector('button.confirm').classList.remove('is-loading')
+        // let showPassword = elem.getAttribute("data-type") === "OAUTH";
+
         modal.querySelector('.data-username').innerText = elem.getAttribute("data-username")
 
-        var permissions = elem.getAttribute('data-permissions').split(",").map(parseInt)
+        var permissions = elem.getAttribute('data-permissions').split(",").map(v => parseInt(v));
+
         for (var i = 0; permissionsMap[i]; i++) {
             document.getElementById(permissionsMap[i]).checked = permissions[i]
         }
 
-        modal.classList.add('is-active');
 
         const closeModal = function () {
             modal.querySelector('button.confirm').removeEventListener('click', confirmEvent)
@@ -126,11 +130,13 @@
         const cancelEvent = function (evt) {
             // onCancel && onCancel();
             closeModal();
-        }
+        };
 
-        modal.querySelector('button.confirm').addEventListener('click', confirmEvent)
-        modal.querySelector('button.cancel').addEventListener('click', cancelEvent)
-        modal.querySelector('.modal-background').addEventListener('click', cancelEvent)
+        modal.querySelector('button.confirm').addEventListener('click', confirmEvent);
+        modal.querySelector('button.cancel').addEventListener('click', cancelEvent);
+        modal.querySelector('.modal-background').addEventListener('click', cancelEvent);
+
+        modal.classList.add('is-active');
 
     }
 </script>

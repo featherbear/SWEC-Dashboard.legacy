@@ -1,20 +1,11 @@
 from ..connectors import Database
-bulletin_replacements_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS bulletin_replacements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    site INTEGER NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL,
 
-    FOREIGN KEY (site) REFERENCES bulletin_sites (id)
-);
-"""
-
-bulletin_notices_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS bulletin_notices(
+notices_link_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS notices_link(
     notice INTEGER NOT NULL,
     site INTEGER NOT NULL,
 
-    FOREIGN KEY (notice) REFERENCES notices (id)
-    FOREIGN KEY (site) REFERENCES bulletin_sites (id)
+    FOREIGN KEY (notice) REFERENCES notices (id),
+    FOREIGN KEY (site) REFERENCES sites (id)
 );
 """
 
@@ -23,7 +14,7 @@ def getNoticesMatchingSite(siteID: int = None):
 
     if siteID is None:
         result = Database.fetchAll(
-            """SELECT notice, site FROM bulletin_notices""")
+            """SELECT notice, site FROM notices_link""")
         sites = {}
         for notice, site in result:
             if site not in sites:
@@ -32,7 +23,7 @@ def getNoticesMatchingSite(siteID: int = None):
         return sites
     else:
         result = Database.fetchAll("""SELECT notice
-            FROM bulletin_notices
+            FROM notices_link
             WHERE site = ?
             """, (siteID,))
         print(result)
@@ -42,7 +33,7 @@ def getNoticesMatchingSite(siteID: int = None):
 def getSitesMatchingNotice(noticeID: int = None):
     if noticeID is None:
         result = Database.fetchAll(
-            """SELECT notice, site FROM bulletin_notices""")
+            """SELECT notice, site FROM notices_link""")
         notices = {}
         for notice, site in result:
             if notice not in notices:
@@ -51,7 +42,7 @@ def getSitesMatchingNotice(noticeID: int = None):
         return notices
     else:
         result = Database.fetchAll("""SELECT notice
-            FROM bulletin_notices
+            FROM notices_link
             WHERE notice = ?
             """, (noticeID,))
         print(result)

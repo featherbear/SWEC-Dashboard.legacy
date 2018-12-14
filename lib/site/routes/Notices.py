@@ -61,6 +61,7 @@ def noticesSubmit(self: BaseHandler, path):
 def noticesSubmit_(self: BaseHandler, path):
     if not self.current_user.userHasPermission(PEM.NOTICE_POST):
         return self.send_error(403)
+
     try:
         title = self.get_body_argument("title")
         description = self.get_body_argument("description")
@@ -130,9 +131,7 @@ def editNotice(self: BaseHandler, path):
     )
 
 
-    if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
-            notices.getNotice(id).author == self.current_user.id]):
-
+    if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY), notices.getNotice(id).author == self.current_user.id]):
         if notices.editNotice(id, data, sites=postArgs.get('sites')):
             audit.log(audit.action.NOTICE_EDIT, self.current_user, id)
             status = True
@@ -145,12 +144,11 @@ def deleteNotice(self: BaseHandler, path):
     status = False
     postArgs = json_decode(self.request.body)
     id = postArgs.get('id')
-    status = True
-    # if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
-    #         notices.getNotice(id).author == self.current_user.id]):
-    #     if notices.deleteNotice(id):
-    #         audit.log(audit.action.NOTICE_DELETE, self.current_user, id)
-    #         status = True
+    if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
+            notices.getNotice(id).author == self.current_user.id]):
+        if notices.deleteNotice(id):
+            audit.log(audit.action.NOTICE_DELETE, self.current_user, id)
+            status = True
     return self.write(json_encode(dict(status=status)))
 
 
@@ -172,7 +170,7 @@ def activateNotice(self: BaseHandler, path):
 
 
 
-from ... import sites , bulletin ### ### ### ###
+from ... import sites, notices_link ### ### ### ###
 
 
 @routing.POST("/dashboard/notices/data.json")
@@ -189,7 +187,7 @@ def fetchMore(self: BaseHandler, path):
                          showPending=canManage, showInactive=canManage)
     
 
-    noticesSiteMap = bulletin.getSitesMatchingNotice()
+    noticesSiteMap = notices_link.getSitesMatchingNotice()
 
     timeTaken = time() - queryStart
 

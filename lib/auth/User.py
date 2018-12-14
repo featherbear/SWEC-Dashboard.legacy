@@ -38,6 +38,7 @@ class User(UserModel):
 
     def userHasPermission(self, permission) -> bool:
         if self.id == 0: return True
+
         return not not Database.fetchOne(
             "SELECT id FROM users WHERE userType = ? AND username = ? AND {} = 1".format(permission),
             (self.type, self.username))

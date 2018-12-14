@@ -3,7 +3,7 @@ from tornado.httputil import HTTPServerRequest
 from tornado.web import RequestHandler, authenticated
 from ...jinja2_integration import BaseHandler
 from ..SiteHandler import routing
-from ... import bulletin, audit
+from ... import audit
 from time import time
 from tornado.escape import json_encode, json_decode, xhtml_escape
 from ...connectors import Database
@@ -20,31 +20,32 @@ def bulletinRedirect(self: BaseHandler, path):
 
 @routing.GET("/dashboard/bulletin/index.(?:php|html?)")
 @routing.GET("/dashboard/bulletin/")
-@authenticated
 def bulletinHome(self: BaseHandler, path):
+    print("A")
     noticesSQL = Database.fetchAll("""
-    SELECT notices.title, notices.description
-    FROM notices, bulletin_notices
-    WHERE
-        notices.id = bulletin_notices.notice
-        
-        AND notices.active = 1 
-        AND notices.approved = 1 
-        AND strftime('%s', DMYtoYMD(notices.date)) <= strftime('%s', date('now'))
-        AND strftime('%s', DMYtoYMD(notices.endDate)) >= strftime('%s', date('now'))
-    ORDER BY priority DESC, date DESC
-    """)
+        SELECT notices.title, notices.description
+        FROM notices, notices_link
+        WHERE
+            notices.id = notices_link.notice
+            
+            AND notices.active = 1 
+            AND notices.approved = 1 
+            AND strftime('%s', DMYtoYMD(notices.date)) <= strftime('%s', date('now'))
+            AND strftime('%s', DMYtoYMD(notices.endDate)) >= strftime('%s', date('now'))
+        ORDER BY priority DESC, date DESC
+        """)
+
     # AND bulletin_notices.site = 
     # date <= now <= endDate
     replacementsSQL = Database.fetchAll("""
     SELECT key, value
-    FROM bulletin_replacements
+    FROM sites_data
     WHERE site = 1
     """)
 
     # Should probably reorder the date from DD/MM/YYYY to YYYY/MM/DD
-    replacements = {}
-    replacements.update(notices=noticesSQL,
+    data = {}
+    data.update(notices=noticesSQL,
     ADDMMYYYY="Wednesday, 22nd September 1999",
                         offertory=dict(
                             month=dict(
@@ -65,6 +66,7 @@ A STORY OF A LIL GUY
 A LIL SHEPHERD BOI
 WHO ENDED UP BEING THE SAVIOUR OF THE WORLD"""
                         )
-    replacements.update(dict(replacementsSQL))
-
-    return self.render_jinja2("/dashboard/bulletin/index.html", **replacements)
+    data.update(dict(replacementsSQL))
+    print("AAA")
+    print(data)
+    return self.render_jinja2("/dashboard/bulletin/index.html", **data)

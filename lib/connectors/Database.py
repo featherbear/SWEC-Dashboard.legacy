@@ -1,7 +1,6 @@
 import sqlite3
 
 
-
 def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by db_file
@@ -42,22 +41,27 @@ def fetchAll(*args, **kwargs):
     result = c.fetchall()
     return result
 
+
 def insert(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args, **kwargs)
-    if kwargs.get('commit'): conn.commit()
+    if kwargs.get('commit', True): conn.commit()
     return c.lastrowid
+
 
 def update(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args, **kwargs)
-    if kwargs.get('commit'): conn.commit()
+    if kwargs.get('commit', True): conn.commit()
     return c.rowcount
 
 
 conn = create_connection("data.sqlite")
 
+
 def ddmmyyyyToyyyymmdd(ddmmyyyy):
     # converts DD/MM/YYYY to YYYY-MM-DD
     return "-".join(ddmmyyyy.split("/")[::-1])
+
+
 conn.create_function("DMYtoYMD", 1, ddmmyyyyToyyyymmdd)

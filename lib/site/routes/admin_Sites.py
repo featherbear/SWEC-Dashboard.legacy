@@ -60,7 +60,7 @@ def editSite(self: BaseHandler, path):
     for option in postArgs["replacements"]:
         if "id" in option:
             Database.update("""
-            UPDATE bulletin_replacements
+            UPDATE sites_data
             SET key = ?, value = ?
             WHERE id = ?
             """, (option["key"], option["value"], option["id"]))
@@ -68,7 +68,7 @@ def editSite(self: BaseHandler, path):
             response["replacements"][option["id"]] = option
         else:
             optionID = Database.insert("""
-                INSERT INTO bulletin_replacements (site, key, value)
+                INSERT INTO sites_data (site, key, value)
                 VALUES (?, ?, ?)
                 """, (response["id"], option["key"], option["value"]))
             response["replacements"][optionID] = dict(
@@ -79,18 +79,21 @@ def editSite(self: BaseHandler, path):
 
     return self.finish(json_encode(response))
 
+@routing.POST("/dashboard/sites.json")
+def getSites(self: BaseHandler, path):
+    from ... import sites
+    return self.finish(json_encode(sites.getSites()))
 
 @routing.POST("/dashboard/admin/sites/data.json")
 def fetchMore(self: BaseHandler, path):
     queryStart = time()
 
-    sitesSQL = Database.fetchAll("SELECT * FROM sites")
-    replacementsSQL = Database.fetchAll("SELECT * FROM bulletin_replacements")
+    sitesSQL = Database.fetchAll("SELECT id, name FROM sites")
+    replacementsSQL = Database.fetchAll("SELECT id, site, key, value FROM sites_data")
 
     replacements = {}
     for site in sitesSQL:
-        replacements[site[0]] = list(map(list, filter(
-            lambda record: record[1] == site[0], replacementsSQL)))
+        replacements[site[0]] = list(map(list, filter(lambda record: record[1] == site[0], replacementsSQL)))
         for record in replacements[site[0]]:
             del record[1]
 
