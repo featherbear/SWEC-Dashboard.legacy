@@ -15,7 +15,7 @@ def errorJSON(errString):
 
 @routing.GET("/dashboard/bulletin")
 def bulletinRedirect(self: BaseHandler, path):
-    return self.redirect(path + "/")
+    return self.redirect(path + "/view/")
 
 
 from datetime import datetime
@@ -24,11 +24,14 @@ from datetime import datetime
 #     date_today = datetime.date.today()
 #     date_next = date_today + datetime.timedelta((day - date_today.weekday()) % 7)
 #     return date_next
+@routing.GET("/dashboard/bulletin/view/index.(?:php|html?)")
+@routing.GET("/dashboard/bulletin/view/?")
+def bulletinView(self: BaseHandler, path):
+    return self.render_jinja2("/dashboard/bulletin/view/index.html")
 
-
-@routing.GET("/dashboard/bulletin/index.(?:php|html?)")
-@routing.GET("/dashboard/bulletin/")
-def bulletinHome(self: BaseHandler, path):
+@routing.GET("/dashboard/bulletin/generate/index.(?:php|html?)")
+@routing.GET("/dashboard/bulletin/generate/?")
+def bulletinGenerate(self: BaseHandler, path):
     id = self.get_query_argument("id", None)
     if id:
         data = Database.fetchOne("""
@@ -110,4 +113,4 @@ WHO ENDED UP BEING THE SAVIOUR OF THE WORLD"""
     data.update(dict(replacementsSQL))
     print("AAA")
     print(data)
-    return self.render_jinja2("/dashboard/bulletin/index.html", **data)
+    return self.render_jinja2("/dashboard/bulletin/generate/index.html", **data)

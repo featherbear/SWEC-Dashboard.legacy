@@ -64,6 +64,12 @@ def noticesSubmit_(self: BaseHandler, path):
         return self.send_error(403)
 
     try:
+        enabledSites = []
+        prefix = "site_"
+        for key in self.request.body_arguments:
+            if key.startswith(prefix):
+                enabledSites.append(int(key[len(prefix):]))
+
         title = self.get_body_argument("title")
         description = self.get_body_argument("description")
         date = self.get_body_argument("date")
@@ -77,6 +83,7 @@ def noticesSubmit_(self: BaseHandler, path):
                                       endDate,
                                       0,
                                       )
+        notices_link.updateSitesForNotice(notice.id, enabledSites)
         audit.log(audit.action.NOTICE_SUBMIT,
                   notice.author, notice.id, notice.added)
     except Exception as e:
@@ -130,10 +137,15 @@ def editNotice(self: BaseHandler, path):
         date = postArgs.get('startDate'),
         endDate = postArgs.get('endDate'),
     )
+    print(postArgs.get('sites'))
+
+    enabledSites = postArgs.get('sites')
+    enabledSites = list(map(int, filter(lambda key: enabledSites[key], enabledSites.keys())))
 
     if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
             notices.getNotice(id).author == self.current_user.id]):
-        if notices.editNotice(id, data, sites = postArgs.get('sites')):
+        if notices.editNotice(id, data):
+            notices_link.updateSitesForNotice(id, enabledSites)
             audit.log(audit.action.NOTICE_EDIT, self.current_user, id)
             status = True
     return self.write(json_encode(dict(status = status)))
@@ -148,6 +160,7 @@ def deleteNotice(self: BaseHandler, path):
     if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
             notices.getNotice(id).author == self.current_user.id]):
         if notices.deleteNotice(id):
+            notices_link.updateSitesForNotice(id, [])
             audit.log(audit.action.NOTICE_DELETE, self.current_user, id)
             status = True
     return self.write(json_encode(dict(status = status)))
@@ -217,3 +230,13 @@ def fetchMore(self: BaseHandler, path):
         canManage = canManage
 
     )))
+,
+        sites = sites.getSites(),
+        count = len(data),
+        generated = timeTaken,
+        uid = uid,
+        canManage = canManage
+
+    )))
+))
+)))

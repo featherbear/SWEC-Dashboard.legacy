@@ -11,7 +11,6 @@ notices_link_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS notices_link(
 
 
 def getNoticesMatchingSite(siteID: int = None):
-
     if siteID is None:
         result = Database.fetchAll(
             """SELECT notice, site FROM notices_link""")
@@ -47,3 +46,21 @@ def getSitesMatchingNotice(noticeID: int = None):
             """, (noticeID,))
         print(result)
         return result
+
+
+def updateSitesForNotice(noticeID: int, sites: [int]):
+    Database.update("""
+    DELETE 
+    FROM notices_link
+    WHERE notice = ?
+    """,
+                    (noticeID,),
+                    commit = False)
+    for site in sites:
+        Database.insert("""
+        INSERT
+        INTO notices_link (notice, site)
+        VALUES (?, ?)""",
+                        (noticeID, site),
+                        commit = False)
+    Database.conn.commit()

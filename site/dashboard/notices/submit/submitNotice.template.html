@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css">
 <style>
     .calendar {
         margin: unset;
@@ -19,6 +20,38 @@
 
     </div>
 </div>
+
+
+<div class="field">
+    <div class="label">Appear On</div>
+    <div class="control">
+        <div class="field" name="siteField">
+            <script type="text/javascript">
+                const siteSelectors = {};
+                fetch('/dashboard/sites.json', {method: 'post'}).then(response => response.json()).then(sites => {
+                    var here = document.querySelector("[name=siteField]");
+                    const prefix = "site_";
+                    for (var i in sites) {
+                        var input = document.createElement('input')
+                        input.classList.add("is-checkradio", "is-block", "is-primary")
+                        input.type = "checkbox"
+                        input.name = input.id = prefix + i
+                        input.addEventListener('change', function () {
+                                siteSelectors[this.name.substr(prefix.length)] = this.checked;
+                            })
+                        here.appendChild(input)
+
+                        var label = document.createElement('label')
+                        label.htmlFor = prefix + i
+                        label.innerHTML = sites[i];
+                        here.appendChild(label)
+                    }
+                })
+            </script>
+        </div>
+    </div>
+</div>
+
 
 <div class="field">
     <div class="label">Dates</div>
@@ -44,8 +77,5 @@
         document.querySelector('[type=hidden][name=date]').value = date.start ? moment(date.start).format("DD/MM/YYYY") : 0
         document.querySelector('[type=hidden][name=endDate]').value = date.end ? moment(date.end).format("DD/MM/YYYY") : document.querySelector('[type=hidden][name=date]').value
     });
-
 </script>
-
-
 <!-- Priority -->

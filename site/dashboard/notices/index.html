@@ -59,7 +59,7 @@
             evt.target.classList.add('is-loading')
             fetch('delete', {
                 method: 'post',
-                body: JSON.stringify({ id: noticeID })
+                body: JSON.stringify({id: noticeID})
             })
                 .then(response => response.json())
                 .then(jsonData => {
@@ -92,7 +92,6 @@
         var modal = document.getElementById('noticeEdit');
 
         let modalTitleForm = modal.querySelector('form input[name=title]')
-        console.log(modalTitleForm)
         let modalDescriptionForm = modal.querySelector('form textarea[name=description]')
         let modalDateForm = modal.querySelector('form input[name=date]')
         let modalEndDateForm = modal.querySelector('form input[name=endDate]');
@@ -102,12 +101,20 @@
         let noticeDateElem = noticeElement.querySelector('input[name=date]')
         let noticeEndDateElem = noticeElement.querySelector('input[name=endDate]')
 
-
         modalTitleForm.value = noticeTitleElem.innerText;
         modalDescriptionForm.value = noticeDescriptionElem.innerText;
 
         modalDateForm.value = noticeDateElem.value;
         modalEndDateForm.value = noticeEndDateElem.value;
+
+        let sites = noticeElement.getAttribute("sites");
+        if (sites) sites = sites.split(",");
+        const prefix = "site_";
+        for (var site of document.querySelector("[name=siteField]").getElementsByTagName('input')) {
+            site.checked = sites && sites.indexOf(site.name.substr(prefix.length)) > -1;
+            siteSelectors[site.name.substr(prefix.length)] = site.checked;
+        }
+
 
         calendar.startDate = moment(noticeDateElem.value, "DD/MM/YYYY").toDate()
         if (noticeEndDateElem.value != noticeDateElem.value) calendar.endDate = moment(noticeEndDateElem.value, "DD/MM/YYYY").toDate()
@@ -136,13 +143,14 @@
                 title: modalTitleForm.value,
                 description: modalDescriptionForm.value,
                 startDate: moment(calendar.startDate).format("DD/MM/YYYY"),
-                endDate: moment(calendar.endDate ? calendar.endDate : calendar.startDate).format("DD/MM/YYYY")
-            }
+                endDate: moment(calendar.endDate ? calendar.endDate : calendar.startDate).format("DD/MM/YYYY"),
+                sites: siteSelectors,
+            };
+
+
             fetch('edit', {
                 method: 'post',
-                body: JSON.stringify(data
-
-                )
+                body: JSON.stringify(data)
             })
                 .then(response => response.json())
                 .then(jsonData => {
@@ -152,6 +160,8 @@
                         noticeDescriptionElem.innerText = data.description
                         noticeDateElem.value = data.startDate
                         noticeEndDateElem.value = data.endDate
+
+                        noticeElement.setAttribute('sites', Object.keys(siteSelectors).filter(v => siteSelectors[v]).map(k => parseInt(k)));
                         closeModal();
                     } else {
                         // what to do if there's an error?
@@ -226,7 +236,7 @@
     (function getMore() {
         fetch('data.json', {
             method: 'post',
-            body: JSON.stringify({ startIndex: nextID })
+            body: JSON.stringify({startIndex: nextID})
         })
             .then(response => response.json())
             .then(jsonData => {
@@ -249,6 +259,7 @@
                         tile = document.createElement('article')
                         tile.setAttribute('approved', data.approved)
                         // tile.setAttribute('noticeID', data.id)
+                        if (data.sites) tile.setAttribute('sites', data.sites)
 
                         tile.classList.add("tile", "is-child", "notification")
                         if (jsonData.canManage) {

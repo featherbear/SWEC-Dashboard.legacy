@@ -30,28 +30,28 @@ def create_table(conn, create_table_sql):
 
 def fetchOne(*args, **kwargs):
     c = conn.cursor()
-    c.execute(*args, **kwargs)
+    c.execute(*args)
     result = c.fetchone()
     return result
 
 
 def fetchAll(*args, **kwargs):
     c = conn.cursor()
-    c.execute(*args, **kwargs)
+    c.execute(*args)
     result = c.fetchall()
     return result
 
 
 def insert(*args, **kwargs):
     c = conn.cursor()
-    c.execute(*args, **kwargs)
+    c.execute(*args)
     if kwargs.get('commit', True): conn.commit()
     return c.lastrowid
 
 
 def update(*args, **kwargs):
     c = conn.cursor()
-    c.execute(*args, **kwargs)
+    c.execute(*args)
     if kwargs.get('commit', True): conn.commit()
     return c.rowcount
 

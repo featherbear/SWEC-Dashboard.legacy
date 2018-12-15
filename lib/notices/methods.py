@@ -37,25 +37,11 @@ def submitNotice(title, description, author, date, endDate=None, priority=0, act
     return notice
 
 
-def editNotice(id: int, data: dict, sites: list = None):
+def editNotice(id: int, data: dict):
     # extract only items from `data` which have a non-None value
     data = dict(filter(lambda pair: pair[1], data.items()))
 
     try:
-
-        if sites:
-            if not Database.update("""
-            DELETE FROM bulletin_notices
-            WHERE notice = ?
-            """, (id,), commit=False):
-                raise Exception()
-
-            for site in sites:
-                if not Database.insert("""INSERT 
-                INTO bulletin_notices (notice, site)
-                VALUES (?, ?)""", (id, site), commit=False):
-                    raise Exception()
-
         result = Database.update(
             """
             UPDATE notices 
