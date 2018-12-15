@@ -23,7 +23,8 @@ class action:
     NOTICE_CAN_MODIFY = 19
     NOTICE_CANNOT_MODIFY=20
 
-
+    SERMON_CREATE = 21
+    SERMON_EDIT = 22
 
     _categories: list
 

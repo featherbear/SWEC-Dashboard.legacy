@@ -9,6 +9,7 @@ sermons_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS sermons (
     speaker TEXT NOT NULL,
     outline TEXT NOT NULL,
     
+    UNIQUE (site, date),
     FOREIGN KEY (site) REFERENCES sites (id)
 );
 """
@@ -26,3 +27,21 @@ def getSermons(start: int = None, count: int = None):
     else:
         result = Database.fetchAll("SELECT * FROM sermons ORDER BY id DESC")
     return result
+
+
+def createSermon(site, date, title, passage, speaker, outline):
+    return Database.insert("""
+        INSERT 
+        INTO sermons (site, date, title, passage, speaker, outline)
+        VALUES (?, ?, ?, ?, ?, ?)   
+    """,
+                    (site, date, title, passage, speaker, outline))
+
+
+def editSermon(id, title, passage, speaker, outline):
+    Database.update("""
+        UPDATE sermons
+        SET title = ?, passage = ?, speaker = ?, outline = ?
+        WHERE id = ?
+    """,
+                    (title, passage, speaker, outline, id))

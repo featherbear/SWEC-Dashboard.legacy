@@ -58,9 +58,10 @@ class User(UserModel):
                                             {} boolean NOT NULL,
                                             {} boolean NOT NULL,
                                             {} boolean NOT NULL,
+                                            {} boolean NOT NULL,
                                             {} boolean NOT NULL
                                         );""".format(PEM.SITE_LOGIN, PEM.NOTICE_POST, PEM.NOTICE_MODIFY,
-                                                     PEM.SITE_ADMIN)
+                                                     PEM.SITE_ADMIN, PEM.SERMON_MANAGE)
 
 
 from .. import config

@@ -129,7 +129,7 @@
 
             let meta = {};
             if (sermonID === undefined) {
-                meta.site = srcElem.getAttribute('service');
+                meta.site = srcElem.getAttribute('site');
                 meta.date = srcElem.getAttribute('date');
             } else {
                 meta.id = sermonID;
@@ -182,6 +182,7 @@
 
     let dataToRow = function (dataID) {
         let row = document.createElement('tr');
+        row.classList.add('data_row');
 
         let summary = document.createElement('td');
         summary.innerText = summaryDataFor(dataID);
@@ -207,33 +208,38 @@
         .then(jsonData => {
             services = jsonData;
 
-
+            var comingSunday = new Date();
+            comingSunday.setDate(comingSunday.getDate() + ((7 - comingSunday.getDay())));
             var nextSunday = new Date();
-            nextSunday.setDate(nextSunday.getDate() + ((7 - nextSunday.getDay())));
-            nextSunday_str = moment(nextSunday).format("YYYY-MM-DD");
+            nextSunday.setDate(comingSunday.getDate() + 7);
 
-            for (var service in services) {
-                let row = document.createElement('tr');
-                let td = document.createElement('td');
-                td.colSpan = 2;
-                // if (sermons.filter(sermon => sermon.date === nextSunday_str && sermon.site === service).length !== 0) continue;
+            [nextSunday, comingSunday].forEach(date => {
+                date_str = moment(date).format("YYYY-MM-DD");
 
-                row.setAttribute('date', nextSunday_str);
-                row.setAttribute('site', service);
+                for (var service in services) {
+                    let row = document.createElement('tr');
+                    let td = document.createElement('td');
+                    td.colSpan = 2;
+                    row.classList.add('inserter_row');
+                    // if (sermons.filter(sermon => sermon.date === nextSunday_str && sermon.site === service).length !== 0) continue;
 
-                td.innerText = `Create sermon outline for ${services[service]} - ${formatDate(nextSunday)}`;
-                row.addEventListener('click', () => openModalEdit(undefined, row));
+                    row.setAttribute('date', date_str);
+                    row.setAttribute('site', service);
 
-                row.appendChild(td);
-                document.querySelector("table tbody").appendChild(row);
-            }
-        });
+                    td.innerText = `Create sermon outline for ${services[service]} - ${formatDate(date_str)}`;
+                    row.addEventListener('click', () => openModalEdit(undefined, row));
+
+                    row.appendChild(td);
+                    document.querySelector("table tbody").appendChild(row);
+                }
+            })
+        }).then(() => getMore());
 
     let sermons = {};
 
 
     var nextID = undefined;
-    (getMore = function () {
+    const getMore = function () {
         fetch('data.json', {
             method: 'post',
             body: JSON.stringify({startIndex: nextID})
@@ -243,7 +249,6 @@
 
                 // var time = jsonData.generated
                 for (var data of jsonData.results) {
-                    console.log(data)
                     if (!sermons.hasOwnProperty(data.id)) {
                         sermons[data.id] = {
                             service: data.site,
@@ -253,11 +258,17 @@
                             speaker: data.speaker,
                             outline: data.outline
                         };
+
+                        for (var row of document.getElementsByClassName('inserter_row')) {
+                            if (row.getAttribute('date') == data.date && row.getAttribute('site') == data.site) {
+                                row.parentElement.removeChild(row);
+                            }
+                        }
                         document.querySelector("table tbody").appendChild(dataToRow(data.id));
                     }
                 }
 
-                nextID = jsonData.nextRow
+                nextID = jsonData.nextRow;
                 if (jsonData.count == 0 || nextID == -1) {
                     // no more data, hide / disable fetch more rows
                     document.querySelector('table tfoot').style.display = "none"
@@ -268,6 +279,17 @@
             .catch(err => {
                 console.log(err)
             })
-    })()
+    }
 </script>
+<style>
+    .inserter_row {
+        cursor: pointer;
+        font-style: italic;
+    }
+
+
+    .data_row td:first-child {
+        user-select: all;
+    }
+</style>
 {% endblock %}

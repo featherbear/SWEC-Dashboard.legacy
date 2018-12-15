@@ -27,9 +27,7 @@ def auditRedirect(self: BaseHandler, path):
 @routing.GET("/dashboard/admin/users/index.(?:php|html?)")
 @authenticated
 def auditHome(self: BaseHandler, path):
-    pm = permissionsMapJSON()
-    print(pm)
-    return self.render_jinja2("/dashboard/admin/users.html", permissionsMap=pm)
+    return self.render_jinja2("/dashboard/admin/users.html", permissionsMap=permissionsMapJSON())
 
 
 @routing.POST("/dashboard/admin/users/create")

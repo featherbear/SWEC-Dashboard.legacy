@@ -70,7 +70,10 @@
                     return "User allowed to approve and edit notices: " + data
                 case "NOTICE_CANNOT_MODIFY":
                     return "User disallowed from approving and editing notices: " + data
-
+                case "SERMON_CREATE":
+                    return "User created a sermon: " + data
+                case "SERMON_EDIT":
+                    return "User edited a sermon: " + data
                 default:
                     console.log(actionsMap[actionID] + " - Unexpected data given")
                     return "ERR"

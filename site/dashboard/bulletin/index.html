@@ -46,10 +46,11 @@
             /* font-weight: lighter; */
         }
 
-        h3 {}
+        h3 {
+        }
 
         h4 {
-            font-weight: 500; 
+            font-weight: 500;
         }
 
         h5 {
@@ -162,7 +163,7 @@
             margin-right: -1px;
         }
          */
-        #offertory>.flexContainer>.flexColumn {
+        #offertory > .flexContainer > .flexColumn {
             padding: 0 5px;
         }
 
@@ -170,7 +171,6 @@
             border-right: 1px solid black;
             margin-right: -1px;
         }
-
 
 
         a {
@@ -243,174 +243,169 @@
 
 <body class="A4 landscape">
 
-    <div class="sheet flexContainer">
-        <div class="page flexColumn">
-            <div class="flexContainer flexVertical">
-                <section id="notices" class="flexRow">
-                    <h1 class="no-margin-vertical">Church News</h1>
-                    {% for notice in notices %}
-                    <div>
-                        <h5 class="no-margin-bottom">{{notice[0]|e}}</h5>
-                        <p class="no-margin-vertical">{{notice[1]|e}}</p>
-                    </div>
-                    {% endfor %}
-                </section>
-
+<div class="sheet flexContainer">
+    <div class="page flexColumn">
+        <div class="flexContainer flexVertical">
+            <section id="notices" class="flexRow">
+                <h1 class="no-margin-vertical">Church News</h1>
+                {% for notice in notices %}
                 <div>
-                    {% if offertory %}
-                    <section id="offertory">
-                        <h1>Offertory Update</h1>
-                        <div class="flexContainer">
-                            <div class="flexColumn month text-centre">
-                                <h4 class="no-margin-vertical">{{offertory.month.name}}</h4>
-                                <div class="flexContainer">
-                                    <h5 class="flexColumn no-margin-vertical">Actual</h5>
-                                    <h5 class="flexColumn no-margin-vertical">Budget</h5>
-                                    <h5 class="flexColumn no-margin-vertical">Difference</h5>
-                                </div>
-                                <div class="flexContainer">
-                                    <div class="flexColumn">{{"${:,}".format(offertory.month.actual)}}</div>
-                                    <div class="flexColumn">{{"${:,}".format(offertory.month.budget)}}</div>
-                                    {% set difference = offertory.month.actual - offertory.month.budget %}
-                                    <div class="flexColumn">
-                                        {{
-                                        ("${:,}".format(difference) if difference > 0 else
-                                        "(${:,})".format(-difference) ) if difference else "-"
-                                        }}
-                                    </div>
+                    <h5 class="no-margin-bottom">{{notice[0]|e}}</h5>
+                    <p class="no-margin-vertical">{{notice[1]|e}}</p>
+                </div>
+                {% endfor %}
+            </section>
+
+            <div>
+                {% if offertory %}
+                <section id="offertory">
+                    <h1>Offertory Update</h1>
+                    <div class="flexContainer">
+                        <div class="flexColumn month text-centre">
+                            <h4 class="no-margin-vertical">{{offertory.month.name}}</h4>
+                            <div class="flexContainer">
+                                <h5 class="flexColumn no-margin-vertical">Actual</h5>
+                                <h5 class="flexColumn no-margin-vertical">Budget</h5>
+                                <h5 class="flexColumn no-margin-vertical">Difference</h5>
+                            </div>
+                            <div class="flexContainer">
+                                <div class="flexColumn">{{"${:,}".format(offertory.month.actual)}}</div>
+                                <div class="flexColumn">{{"${:,}".format(offertory.month.budget)}}</div>
+                                {% set difference = offertory.month.actual - offertory.month.budget %}
+                                <div class="flexColumn">
+                                    {{
+                                    ("${:,}".format(difference) if difference > 0 else
+                                    "(${:,})".format(-difference) ) if difference else "-"
+                                    }}
                                 </div>
                             </div>
-                            <div class="flexColumn ytd text-centre">
-                                <h4 class="no-margin-vertical">Year To Date</h4>
-                                <div class="flexContainer">
-                                    <h5 class="flexColumn no-margin-vertical">Actual</h5>
-                                    <h5 class="flexColumn no-margin-vertical">Budget</h5>
-                                    <h5 class="flexColumn no-margin-vertical">Difference</h5>
+                        </div>
+                        <div class="flexColumn ytd text-centre">
+                            <h4 class="no-margin-vertical">Year To Date</h4>
+                            <div class="flexContainer">
+                                <h5 class="flexColumn no-margin-vertical">Actual</h5>
+                                <h5 class="flexColumn no-margin-vertical">Budget</h5>
+                                <h5 class="flexColumn no-margin-vertical">Difference</h5>
+                            </div>
+                            <div class="flexContainer">
+                                <div class="flexColumn">{{"${:,}".format(offertory.ytd.actual)}}</div>
+                                <div class="flexColumn">{{"${:,}".format(offertory.ytd.budget)}}</div>
+                                {% set difference = offertory.ytd.actual - offertory.ytd.budget %}
+                                <div class="flexColumn">{{ ("${:,}".format(difference) if difference >
+                                    0
+                                    else
+                                    "(${:,})".format(-difference) ) if difference else "-" }}
                                 </div>
-                                <div class="flexContainer">
-                                    <div class="flexColumn">{{"${:,}".format(offertory.ytd.actual)}}</div>
-                                    <div class="flexColumn">{{"${:,}".format(offertory.ytd.budget)}}</div>
-                                    {% set difference = offertory.ytd.actual - offertory.ytd.budget %}
-                                    <div class="flexColumn">{{ ("${:,}".format(difference) if difference >
-                                        0
-                                        else
-                                        "(${:,})".format(-difference) ) if difference else "-" }}
-                                    </div>
-                                </div>
-
                             </div>
 
                         </div>
-                    </section>
-                    {% endif %}
 
-                    <div class="flexContainer">
-                        <section class="flexColumn" id="events">
-                            <h1>Upcoming Events</h1>
-                        </section>
-                        <section id="social" class="flexColumn" style="flex-grow: 0; min-width: 205px;">
-                            <h1>Stay Connected</h1>
-                            <div><i class="icon icon-facebook"></i><a href="//fb.com/swechurch">fb.com/swechurch</a></div>
-                            <div><i class="icon icon-instagram"></i><a href="//instagram.com/swechurch">@swechurch</a></div>
-                            <div><i class="icon icon-mail"></i><a href="//swec.org.au/newsletter">swec.org.au/newsletter</a>
-                            </div>
-                        </section>
                     </div>
+                </section>
+                {% endif %}
+
+                <div class="flexContainer">
+                    <section class="flexColumn" id="events">
+                        <h1>Upcoming Events</h1>
+                    </section>
+                    <section id="social" class="flexColumn" style="flex-grow: 0; min-width: 205px;">
+                        <h1>Stay Connected</h1>
+                        <div><i class="icon icon-facebook"></i><a href="//fb.com/swechurch">fb.com/swechurch</a></div>
+                        <div><i class="icon icon-instagram"></i><a href="//instagram.com/swechurch">@swechurch</a></div>
+                        <div><i class="icon icon-mail"></i><a href="//swec.org.au/newsletter">swec.org.au/newsletter</a>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="page flexColumn">
+        <div class="flexContainer flexVertical">
+            <section id="header">
+                <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1118.87 538.43">
+                    <style>
+                        path {
+                            fill: #272727
+                        }
+                    </style>
+                    <path d="M163.71 57.56s33.01 63.37-39.73 147.25c-22.17 25.57-96.35 98.71-97.44 165.27-.32 19.28.83 79.26 95.18 122.39 2.01-14.99-5.16-54.08 53.15-126.38 26.19-31.78 138.72-138.77-11.16-308.53z"></path>
+                    <path d="M154.78 83.19s-15.33-20.85 1.58-64.56c-13.08 13.85-49.18 52.03-1.58 64.56zM142.49 513.26s-6.15-61.52 53.35-131.13c59.49-69.62 57.76-97.7 57.76-101.16 0-3.46 35.46 97.89 9.3 149.85-19.24 34.23-56.56 48.8-75.55 58.16-18.99 9.36-44.86 24.28-44.86 24.28z"></path>
+                    <g>
+                        <path d="M365.71 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM475.23 198.45c0 17.61-14.48 31.56-32.72 31.56-18.33 0-32.81-13.95-32.81-31.56s14.48-31.47 32.81-31.47c18.24 0 32.72 13.86 32.72 31.47zm-58.29 0c0 13.86 11.62 25.04 25.57 25.04s25.39-11.18 25.39-25.04-11.44-24.86-25.39-24.86-25.57 11-25.57 24.86zM526.65 223.49c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15V204c0 16.36-9.84 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15V204c.01 12.33 7.35 19.49 19.24 19.49zM623.3 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM654.24 167.16v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM748.75 200.15v5.1h-21.01v-5.1h21.01zM776.2 167.16l17.17 54.54 16.99-54.54h7.15l17.17 54.54 16.99-54.54h7.42l-21.01 62.59h-7.33l-16.9-53.02-17.08 53.02h-7.33l-20.92-62.59h7.68zM924.27 167.16v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62H881.8v-62.59h42.47zM971.57 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM1060.98 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM390.03 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM417.92 274.45l21.55 54.54 21.64-54.54h7.51l-25.57 62.59h-7.42l-25.39-62.59h7.68zM527.45 321.04h-34.06l-6.97 16h-7.6l28.07-62.59h7.42l27.99 62.59h-7.78l-7.07-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM572.96 274.45l37.55 50.88v-50.88h7.06v62.59h-7.33l-37.55-50.79v50.79h-7.15v-62.59h7.42zM693.67 306.46h6.35v22.71c-6.17 4.92-14.84 8.14-23.25 8.14-18.15 0-32.64-13.95-32.64-31.56s14.57-31.47 32.99-31.47c8.67 0 17.08 3.31 23.07 8.58l-4.11 5.19c-5.1-4.56-11.98-7.24-18.96-7.24-14.31 0-25.75 11.09-25.75 24.95 0 13.95 11.53 25.04 25.84 25.04 5.63 0 11.62-1.97 16.45-5.27v-19.07zM773.25 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM809.55 274.45v55.97H837v6.62h-34.6v-62.59h7.15zM869.19 274.45v62.59h-7.15v-62.59h7.15zM928.38 280.8c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.89 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.49-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM1016.81 321.04h-34.07l-6.97 16h-7.6l28.08-62.59h7.42l27.98 62.59h-7.78l-7.06-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM1062.05 274.45v55.97h27.45v6.62h-34.6v-62.59h7.15zM374.38 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM430.71 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM532.91 438.08c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15v36.84c0 16.36-9.83 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15v36.84c.01 12.33 7.35 19.49 19.24 19.49zM630.99 444.34l-13.14-20.03c-1.25.09-2.59.18-4.02.18H597.2v19.85h-7.15v-62.59h23.78c15.65 0 24.68 7.69 24.68 21.01 0 10.28-5.1 17.35-14.13 20.21l14.75 21.37h-8.14zm-17.17-26.47c11.35 0 17.79-5.1 17.79-14.93 0-9.57-6.44-14.57-17.79-14.57h-16.63v29.5h16.63zM694.92 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.58 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.62-7.8-18.51-7.8zM751.25 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15z"></path>
+                    </g>
+                </svg>
+                <h4 class="text-centre no-margin-vertical">{{ADDMMYYYY}} | {{serviceName|e}} | www.swec.org.au</h4>
+                <h5 class="text-centre no-margin-vertical">Pastor {{contactName|e}} | {{contactPhone|e}} |
+                    {{contactEmail|e}}</h5>
+            </section>
+            <section id="serviceInfo" class="flexRow indent1">
+                <h4>What we'll be doing during our time together</h4>
+                <h4 class="no-margin-bottom">1. Worship</h4>
+                <p class="no-margin-vertical">We'll be worshipping God through song, prayer and by hearing His
+                    word.</p>
+                <div class="indent1">
+                    <h5 class="no-margin-vertical">Today's confession prayer</h5>
+                    <p class="confession indent1 no-margin-vertical">{{confession|e}}</p>
+                    <h5 class="no-margin-vertical">Bible reading - <span
+                            class="font-normal">{{bibleGospelPassage|e}}</span></h5>
+                </div>
 
+                <h4 class="no-margin-vertical">2. Community</h4>
+                <p class="no-margin-vertical">An opportunity to get updated with what's happening at SWEC!</p>
 
+                <h4 class="no-margin-vertical">3. Prayer</h4>
+                <p class="no-margin-vertical">We'll be praying for various needs in our church, the wider
+                    community, and the world.</p>
 
+                <h4 class="no-margin-vertical">4. God's Word</h4>
+                <p class="no-margin-vertical">Today's sermon will be given by {{sermonData.speaker|e}}.</p>
 
+                <h4 class="no-margin-vertical">5. Response</h4>
+                <p class="no-margin-vertical">An opportunity for us to respond by singing, through holy communion,
+                    and by financial giving.</p>
 
+                <h4 class="no-margin-vertical">6. Blessing and Sending</h4>
+                <p class="no-margin-vertical">Go with God's blessing to love and serve Him and the world.</p>
+            </section>
+            <section id="pastoralTeam" class="text-centre flexContainer">
+                <div class="flexColumn">
+                    <h4 class="no-margin-bottom">Pastoral Team</h4>
+                    <div>Peter Ko (Lead Pastor)</div>
+                    <div>Stephen Fei</div>
+                    <div>Marshall Scott</div>
+                    <div>Dom Cheung</div>
+                    <div>Karen Ko</div>
+                </div>
+                <div class="flexColumn">
+                    <h4 class="no-margin-bottom">Elders</h4>
+                    <div>Johnson Lee</div>
+                    <div>Andrew Lim</div>
+                    <div>Kirby Wong</div>
+                    <div>Nelson Siu</div>
 
-
-
-
-
-
-
-
-        <div class="page flexColumn">
-            <div class="flexContainer flexVertical">
-                <section id="header">
-                    <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1118.87 538.43">
-                        <style>
-                            path {
-                                fill: #272727
-                            }
-                        </style>
-                        <path d="M163.71 57.56s33.01 63.37-39.73 147.25c-22.17 25.57-96.35 98.71-97.44 165.27-.32 19.28.83 79.26 95.18 122.39 2.01-14.99-5.16-54.08 53.15-126.38 26.19-31.78 138.72-138.77-11.16-308.53z" />
-                        <path d="M154.78 83.19s-15.33-20.85 1.58-64.56c-13.08 13.85-49.18 52.03-1.58 64.56zM142.49 513.26s-6.15-61.52 53.35-131.13c59.49-69.62 57.76-97.7 57.76-101.16 0-3.46 35.46 97.89 9.3 149.85-19.24 34.23-56.56 48.8-75.55 58.16-18.99 9.36-44.86 24.28-44.86 24.28z" />
-                        <g>
-                            <path d="M365.71 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM475.23 198.45c0 17.61-14.48 31.56-32.72 31.56-18.33 0-32.81-13.95-32.81-31.56s14.48-31.47 32.81-31.47c18.24 0 32.72 13.86 32.72 31.47zm-58.29 0c0 13.86 11.62 25.04 25.57 25.04s25.39-11.18 25.39-25.04-11.44-24.86-25.39-24.86-25.57 11-25.57 24.86zM526.65 223.49c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15V204c0 16.36-9.84 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15V204c.01 12.33 7.35 19.49 19.24 19.49zM623.3 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM654.24 167.16v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM748.75 200.15v5.1h-21.01v-5.1h21.01zM776.2 167.16l17.17 54.54 16.99-54.54h7.15l17.17 54.54 16.99-54.54h7.42l-21.01 62.59h-7.33l-16.9-53.02-17.08 53.02h-7.33l-20.92-62.59h7.68zM924.27 167.16v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62H881.8v-62.59h42.47zM971.57 173.86c-8.05 0-13.32 3.22-13.32 8.58 0 16.27 35.23 7.78 35.14 30.49 0 10.37-9.21 17.08-22.62 17.08-9.12 0-18.06-3.93-23.96-9.57l3.22-6.17c5.81 5.54 13.77 8.76 20.83 8.76 9.03 0 14.66-3.67 14.66-9.75.09-16.72-35.14-7.87-35.14-30.31 0-9.84 8.67-16.09 21.64-16.09 7.24 0 14.66 2.32 19.85 5.81l-3.04 6.35c-5.64-3.66-12.26-5.18-17.26-5.18zM1060.98 167.16v6.62h-20.48v55.97h-7.15v-55.97h-20.39v-6.62h48.02zM390.03 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM417.92 274.45l21.55 54.54 21.64-54.54h7.51l-25.57 62.59h-7.42l-25.39-62.59h7.68zM527.45 321.04h-34.06l-6.97 16h-7.6l28.07-62.59h7.42l27.99 62.59h-7.78l-7.07-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM572.96 274.45l37.55 50.88v-50.88h7.06v62.59h-7.33l-37.55-50.79v50.79h-7.15v-62.59h7.42zM693.67 306.46h6.35v22.71c-6.17 4.92-14.84 8.14-23.25 8.14-18.15 0-32.64-13.95-32.64-31.56s14.57-31.47 32.99-31.47c8.67 0 17.08 3.31 23.07 8.58l-4.11 5.19c-5.1-4.56-11.98-7.24-18.96-7.24-14.31 0-25.75 11.09-25.75 24.95 0 13.95 11.53 25.04 25.84 25.04 5.63 0 11.62-1.97 16.45-5.27v-19.07zM773.25 274.45v6.62h-35.32v21.01h31.56v6.53h-31.56v21.82h36.48v6.62h-43.63v-62.59h42.47zM809.55 274.45v55.97H837v6.62h-34.6v-62.59h7.15zM869.19 274.45v62.59h-7.15v-62.59h7.15zM928.38 280.8c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.89 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.49-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM1016.81 321.04h-34.07l-6.97 16h-7.6l28.08-62.59h7.42l27.98 62.59h-7.78l-7.06-16zm-2.86-6.62l-14.22-32.19-14.04 32.19h28.26zM1062.05 274.45v55.97h27.45v6.62h-34.6v-62.59h7.15zM374.38 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.57 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.63-7.8-18.51-7.8zM430.71 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15zM532.91 438.08c11.89 0 19.04-7.15 19.04-19.49v-36.84h7.15v36.84c0 16.36-9.83 26.02-26.2 26.02-16.45 0-26.38-9.66-26.38-26.02v-36.84h7.15v36.84c.01 12.33 7.35 19.49 19.24 19.49zM630.99 444.34l-13.14-20.03c-1.25.09-2.59.18-4.02.18H597.2v19.85h-7.15v-62.59h23.78c15.65 0 24.68 7.69 24.68 21.01 0 10.28-5.1 17.35-14.13 20.21l14.75 21.37h-8.14zm-17.17-26.47c11.35 0 17.79-5.1 17.79-14.93 0-9.57-6.44-14.57-17.79-14.57h-16.63v29.5h16.63zM694.92 388.1c-14.13 0-25.48 11-25.48 24.86 0 13.77 11.35 24.95 25.48 24.95 6.88 0 13.59-2.86 18.51-7.51l4.38 4.74c-6.17 5.81-14.58 9.48-23.25 9.48-18.06 0-32.37-13.95-32.37-31.65 0-17.52 14.48-31.38 32.64-31.38 8.58 0 16.9 3.49 22.89 9.12l-4.29 5.19c-4.83-4.85-11.62-7.8-18.51-7.8zM751.25 381.75v28.34h37.73v-28.34h7.15v62.59h-7.15v-27.72h-37.73v27.72h-7.15v-62.59h7.15z" />
-                        </g>
-                    </svg>
-                    <h4 class="text-centre no-margin-vertical">{{ADDMMYYYY}} | {{serviceName|e}} | www.swec.org.au</h4>
-                    <h5 class="text-centre no-margin-vertical">Pastor {{contactName|e}} | {{contactPhone|e}} | {{contactEmail|e}}</h5>
-                </section>
-                <section id="serviceInfo" class="flexRow indent1">
-                    <h4>What we'll be doing during our time together</h4>
-                    <h4 class="no-margin-bottom">1. Worship</h4>
-                    <p class="no-margin-vertical">We'll be worshipping God through song, prayer and by hearing His
-                        word.</p>
-                    <div class="indent1">
-                        <h5 class="no-margin-vertical">Today's confession prayer</h5>
-                        <p class="confession indent1 no-margin-vertical">{{confession|e}}</p>
-                        <h5 class="no-margin-vertical">Bible reading - <span class="font-normal">{{bibleGospelPassage|e}}</span></h5>
-                    </div>
-
-                    <h4 class="no-margin-vertical">2. Community</h4>
-                    <p class="no-margin-vertical">An opportunity to get updated with what's happening at SWEC!</p>
-
-                    <h4 class="no-margin-vertical">3. Prayer</h4>
-                    <p class="no-margin-vertical">We'll be praying for various needs in our church, the wider
-                        community, and the world.</p>
-
-                    <h4 class="no-margin-vertical">4. God's Word</h4>
-                    <p class="no-margin-vertical">Today's sermon will be given by {{speaker|e}}</p>
-
-                    <h4 class="no-margin-vertical">5. Response</h4>
-                    <p class="no-margin-vertical">An opportunity for us to respond by singing, through holy communion,
-                        and by financial giving</p>
-
-                    <h4 class="no-margin-vertical">6. Blessing and Sending</h4>
-                    <p class="no-margin-vertical">Go with God's blessing to love and serve Him and the world</p>
-                </section>
-                <section id="pastoralTeam" class="text-centre flexContainer">
-                    <div class="flexColumn">
-                        <h4 class="no-margin-bottom">Pastoral Team</h4>
-                        <div>Peter Ko (Lead Pastor)</div>
-                        <div>Stephen Fei</div>
-                        <div>Marshall Scott</div>
-                        <div>Dom Cheung</div>
-                        <div>Karen Ko</div>
-                    </div>
-                    <div class="flexColumn">
-                        <h4 class="no-margin-bottom">Elders</h4>
-                        <div>Johnson Lee</div>
-                        <div>Andrew Lim</div>
-                        <div>Kirby Wong</div>
-                        <div>Nelson Siu</div>
-
-                        <p><a href="mailto:board@swec.org.au"><i>board@swec.org.au</i></a></p>
-                    </div>
-                    <div class="flexColumn">
-                        <h4 class="no-margin-bottom">Student Pastors</h4>
-                        <div>Andrew Hayes</div>
-                        <div>James Hoey</div>
-                        <h4 class="no-margin-bottom">Ministry Intern</h4>
-                        <div>Lisa Truong</div>
-                    </div>
-                    <section>
-
-
-            </div>
-
+                    <p><a href="mailto:board@swec.org.au"><i>board@swec.org.au</i></a></p>
+                </div>
+                <div class="flexColumn">
+                    <h4 class="no-margin-bottom">Student Pastors</h4>
+                    <div>Andrew Hayes</div>
+                    <div>James Hoey</div>
+                    <h4 class="no-margin-bottom">Ministry Intern</h4>
+                    <div>Lisa Truong</div>
+                </div>
+            </section>
         </div>
     </div>
+</div>
+<div class="sheet flexContainer">
+    <div class="page flexColumn">
+        <h1>{{sermonData.title|e}}</h1>
+        <h2>{{sermonData.passage|e}}</h2>
+        <p class="sermon_outline">{{sermonData.outline|e}}</p>
+    </div>
+    <div class="page flexColumn">
 
+    </div>
+</div>
 </body>
 <script>
     /*
@@ -442,5 +437,9 @@ html2pdf().set({
 
 
 </script>
-
+<style>
+    .sermon_outline {
+        white-space: pre;
+    }
+</style>
 </html>
