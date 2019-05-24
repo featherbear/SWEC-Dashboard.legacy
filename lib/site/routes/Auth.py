@@ -29,3 +29,10 @@ def post(self: tornado.web.RequestHandler, path):
         self.set_secure_cookie("session", "|".join(
             [auth.AUTH_TYPE.AUTH_USER, username, str(int(time()) + 60 * 60)]))
         return self.redirect(self.get_query_argument("next", "/"))
+
+
+@routing.POST("/logout/?")
+@routing.GET("/logout/?")
+def logout(self, path):
+    self.clear_cookie("session")
+    return self.redirect(self.get_login_url())
