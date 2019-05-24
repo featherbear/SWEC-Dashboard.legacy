@@ -16,7 +16,7 @@ class routing:
     @staticmethod
     def GET(urlRegex):
         def wrapper(func):
-            print("Updating GET route", urlRegex, "->", func)
+            # print("Updating GET route", urlRegex, "->", func)
             if urlRegex in routing._routesGET:
                 raise Exception("Duplicate routing pattern: " + urlRegex)
             routing._routesGET[urlRegex] = func
@@ -28,7 +28,7 @@ class routing:
     def POST(urlRegex):
 
         def wrapper(func):
-            print("Updating POST route", urlRegex, "->", func)
+            # print("Updating POST route", urlRegex, "->", func)
 
             if urlRegex in routing._routesPOST:
                 raise Exception("Duplicate routing pattern: " + urlRegex)
