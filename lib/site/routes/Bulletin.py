@@ -177,4 +177,4 @@ def bulletinGenerate(self: BaseHandler, path):
                 confession=getWeeklyConfession(ceil(dateObj.day / 7)), bibleReading="",
                 sermonData=sermonData)
     data.update(dict(replacementsSQL))
-    return self.render_jinja2("/dashboard/bulletin/generate/index.html", **data)
+    return self.render_jinja2("/dashboard/bulletin/bulletinTemplate.html", **data)
