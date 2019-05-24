@@ -1,11 +1,9 @@
-from tornado.httputil import HTTPServerRequest
-from tornado.web import RequestHandler, authenticated
+from tornado.web import authenticated
 
 from ..SiteHandler import routing
-from ... import notices
 from ...jinja2_integration import BaseHandler
 
-from tornado.escape import json_encode, xhtml_escape
+from tornado.escape import json_encode
 
 
 def errorJSON(errString):

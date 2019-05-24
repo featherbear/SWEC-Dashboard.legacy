@@ -1,3 +1,4 @@
+from lib.connectors import Database
 import tornado.ioloop
 import tornado.web
 
@@ -10,12 +11,11 @@ app = tornado.web.Application([
     ("/login/oauth", ElvantoAuth),
     ("/(.*)", SiteHandler),
 ],
-    cookie_secret = "ABC",
+    cookie_secret="ABC",
     # xsrf_cookies = True,
-    login_url = "/login/"
+    login_url="/login/"
 )
 
-from lib.connectors import Database
 
 if Database.conn is not None:
     from lib.auth import UserSession
@@ -45,6 +45,9 @@ if Database.conn is not None:
 else:
     raise Exception("Cannot create the database connection.")
 
-app.listen(58388)
 
+PORT = 58388
+app.listen(PORT)
+
+print("Server listening on port " + str(PORT))
 tornado.ioloop.IOLoop.current().start()

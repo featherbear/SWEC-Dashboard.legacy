@@ -94,7 +94,6 @@ def fetch(start: int, number: int):
                             format((",".join(map(str, map(lambda s: getattr(action, s), action._categories))))),
                             (start,))
     res = res[:-number - 1:-1]
-    print(res)
     # Get rows 1-57; then reverse and select 5
     # Faster than doing `SELECT * FROM (... LIMIT ) ORDER BY ... LIMIT
     return res
@@ -102,6 +101,5 @@ def fetch(start: int, number: int):
 
 def getCount():
     result = Database.fetchOne("SELECT MAX(rowid) from audit")
-    print(result)
     return result[0] if result else 0
 

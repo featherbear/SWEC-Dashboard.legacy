@@ -1,80 +1,81 @@
-html, body {
-    font-family: 'Open Sans', serif;
-    font-size: 14px;
-    font-weight: 300;
+html,
+body {
+  font-family: "Open Sans", serif;
+  font-size: 14px;
+  font-weight: 300;
 }
 
 .hero.is-success {
-    background: #F2F6FA;
+  background: #f2f6fa;
 }
 
-.hero .nav, .hero.is-success .nav {
-    -webkit-box-shadow: none;
-    box-shadow: none;
+.hero .nav,
+.hero.is-success .nav {
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 
 .box {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 input {
-    font-weight: 300;
+  font-weight: 300;
 }
 
 p {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 p.subtitle {
-    padding-top: 1rem;
+  padding-top: 1rem;
 }
 
 #errorMessage:before {
-    content: "Logon failure: ";
-
+  content: "Logon failure: ";
 }
 
 #errorMessage {
-    display: none;
-    font-weight: bold;
+  display: none;
+  font-weight: bold;
 }
 
 /* Adapted from Bulma .tag */
 #elvantoAuth span:nth-child(1):before {
-    background-size: cover;
-    display: inline-block;
-    content: "";
-    width: 2em;
-    height: 2em;
-    vertical-align: middle;
-    background-image: url(/assets/icon/elvanto.svg);
+  background-size: cover;
+  display: inline-block;
+  content: "";
+  width: 2em;
+  height: 2em;
+  vertical-align: middle;
+  background-image: url(/assets/icon/elvanto.svg);
 }
 
 #elvantoAuth span:nth-child(1) {
-    background-color: #323232;
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
+  background-color: #323232;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
 
 #elvantoAuth span:nth-child(2) {
-    background-color: #70be3f;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    color: white;
-     width: 100%;
+  background-color: #70be3f;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  color: white;
+  width: 100%;
 }
 
 #elvantoAuth > div > div {
-    cursor: pointer;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: -0.5rem;
+  cursor: pointer;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: -0.5rem;
 }
 
 #elvantoAuth a {
-    border: none;
-    padding-left: 0;
-    padding-right: 0;
-    width: 100%;
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
 }

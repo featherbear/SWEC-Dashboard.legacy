@@ -1,3 +1,5 @@
+from ..connectors import Database
+
 sites_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS sites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
@@ -13,8 +15,6 @@ sites_data_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS sites_data (
     FOREIGN KEY (site) REFERENCES sites (id)
 );
 """
-
-from ..connectors import Database
 
 
 def getSites():

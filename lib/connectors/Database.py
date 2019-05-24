@@ -10,8 +10,8 @@ def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
         return conn
-    except sqlite3.Error as e:
-        print(e)
+    except sqlite3.Error as err:
+        print("sqlite:", err)
     return None
 
 
@@ -24,8 +24,8 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
-    except sqlite3.Error as e:
-        print("sqlite:", e)
+    except sqlite3.Error as err:
+        print("sqlite:", err)
 
 
 def fetchOne(*args, **kwargs):
@@ -45,14 +45,16 @@ def fetchAll(*args, **kwargs):
 def insert(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args)
-    if kwargs.get('commit', True): conn.commit()
+    if kwargs.get('commit', True):
+        conn.commit()
     return c.lastrowid
 
 
 def update(*args, **kwargs):
     c = conn.cursor()
     c.execute(*args)
-    if kwargs.get('commit', True): conn.commit()
+    if kwargs.get('commit', True):
+        conn.commit()
     return c.rowcount
 
 

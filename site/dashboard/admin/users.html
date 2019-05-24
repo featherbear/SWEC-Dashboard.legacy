@@ -1,199 +1,218 @@
-{% extends "/dropins/site.html" %}
-{% block head %}
-<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css">
-<link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css">
+{% extends "/dropins/site.html" %} {% block head %}
+<link rel="stylesheet" href="/assets/css/bulma-tooltip.min.css" />
+<link rel="stylesheet" href="/assets/css/bulma-checkradio.min.css" />
 
 <script type="text/javascript" src="/assets/js/moment.min.js"></script>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <script type="text/javascript">
-    const permissionsMap = {{ permissionsMap }}
+  const permissionsMap = {{ permissionsMap }}
 </script>
 <div id="userEdit" class="modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">User Edit - <span class="data-name"></span></p>
-            <!--<button class="button is-danger is-outlined">Delete</button>-->
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        User Edit - <span class="data-name"></span>
+      </p>
+      <!--<button class="button is-danger is-outlined">Delete</button>-->
+    </header>
+    <section class="modal-card-body">
+      <form>
+        <div>User ID: <span class="data-id"></span></div>
+        <div>User Type: <span class="data-type"></span></div>
+        <div>Username: <span class="data-username"></span></div>
+        <!--<div>Password: <span class="button is-warning is-small">Change password</span></div>-->
 
-        </header>
-        <section class="modal-card-body">
-            <form>
-                <div>User ID: <span class="data-id"></span></div>
-                <div>User Type: <span class="data-type"></span></div>
-                <div>Username: <span class="data-username"></span></div>
-                <!--<div>Password: <span class="button is-warning is-small">Change password</span></div>-->
+        <div class="label">Permissions</div>
+        <script type="text/javascript">
+          var here = document.querySelector("#userEdit form");
+          for (var i = 0; permissionsMap[i]; i++) {
+            var field = document.createElement("div");
+            field.classList.add("field");
 
-                <div class="label">Permissions</div>
-                <script type="text/javascript">
-                    var here = document.querySelector("#userEdit form")
-                    for (var i = 0; permissionsMap[i]; i++) {
-                        var field = document.createElement('div')
-                        field.classList.add('field')
+            var input = document.createElement("input");
+            input.classList.add("is-checkradio", "is-block", "is-info");
+            input.type = "checkbox";
+            input.id = permissionsMap[i];
+            field.appendChild(input);
 
-                        var input = document.createElement('input')
-                        input.classList.add("is-checkradio", "is-block", "is-info")
-                        input.type = "checkbox"
-                        input.id = permissionsMap[i]
-                        field.appendChild(input)
+            var label = document.createElement("label");
+            label.htmlFor = permissionsMap[i];
+            label.innerHTML = permissionsMap[i];
+            field.appendChild(label);
 
-                        var label = document.createElement('label')
-                        label.htmlFor = permissionsMap[i]
-                        label.innerHTML = permissionsMap[i]
-                        field.appendChild(label)
-
-                        here.appendChild(field)
-                    }
-                </script>
-
-            </form>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success confirm">Save Changes</button>
-            <button class="button cancel">Cancel</button>
-        </footer>
-    </div>
+            here.appendChild(field);
+          }
+        </script>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success confirm">Save Changes</button>
+      <button class="button cancel">Cancel</button>
+    </footer>
+  </div>
 </div>
 
-
 <table class="table is-striped is-hoverable is-fullwidth">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-        </tr>
-    </thead>
-    <tfoot>
-        <tr>
-            <th colspan="2"><a onclick="getMore()">Load more...</a></th>
-        </tr>
-    </tfoot>
-    <tbody>
-        <!-- No content message here -->
-    </tbody>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th colspan="2"><a onclick="getMore()">Load more...</a></th>
+    </tr>
+  </tfoot>
+  <tbody>
+    <!-- No content message here -->
+  </tbody>
 </table>
 <script type="text/javascript">
-    function openModalUserEdit(elem) {
-        var modal = document.getElementById('userEdit');
-        modal.querySelector('.data-name').innerText = elem.getAttribute("data-name")
-        modal.querySelector('.data-id').innerText = elem.getAttribute("data-id")
-        modal.querySelector('.data-type').innerText = elem.getAttribute("data-type")
+  function openModalUserEdit(elem) {
+    var modal = document.getElementById("userEdit");
+    modal.querySelector(".data-name").innerText = elem.getAttribute(
+      "data-name"
+    );
+    modal.querySelector(".data-id").innerText = elem.getAttribute("data-id");
+    modal.querySelector(".data-type").innerText = elem.getAttribute(
+      "data-type"
+    );
 
-        modal.querySelector('button.confirm').classList.remove('is-loading')
-        // let showPassword = elem.getAttribute("data-type") === "OAUTH";
+    modal.querySelector("button.confirm").classList.remove("is-loading");
+    // let showPassword = elem.getAttribute("data-type") === "OAUTH";
 
-        modal.querySelector('.data-username').innerText = elem.getAttribute("data-username")
+    modal.querySelector(".data-username").innerText = elem.getAttribute(
+      "data-username"
+    );
 
-        var permissions = elem.getAttribute('data-permissions').split(",").map(v => parseInt(v));
+    var permissions = elem
+      .getAttribute("data-permissions")
+      .split(",")
+      .map(v => parseInt(v));
 
-        for (var i = 0; permissionsMap[i]; i++) {
-            document.getElementById(permissionsMap[i]).checked = permissions[i]
-        }
-
-
-        const closeModal = function () {
-            modal.querySelector('button.confirm').removeEventListener('click', confirmEvent)
-            modal.querySelector('button.cancel').removeEventListener('click', cancelEvent)
-            modal.querySelector('.modal-background').removeEventListener('click', cancelEvent)
-            modal.classList.remove('is-active');
-        }
-
-        const confirmEvent = function (evt) {
-            var form = document.querySelector('form')
-            evt.target.classList.add('is-loading')
-            var data = {
-                id: elem.getAttribute('data-id')
-            }
-
-            for (var i = 0; permissionsMap[i]; i++) {
-                if (Boolean(document.getElementById(permissionsMap[i]).checked) != Boolean(permissions[i])) {
-                    data[permissionsMap[i]] = permissions[i] = document.getElementById(permissionsMap[i]).checked
-                }
-            }
-
-            fetch('permission', {
-                method: 'post',
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(jsonData => {
-                    evt.target.classList.remove('is-loading')
-                    if (jsonData.status) {
-                        elem.setAttribute('data-permissions', permissions)
-                        closeModal();
-                    } else {
-                        // what to do if there's an error?
-                    }
-                })
-        }
-
-        const cancelEvent = function (evt) {
-            // onCancel && onCancel();
-            closeModal();
-        };
-
-        modal.querySelector('button.confirm').addEventListener('click', confirmEvent);
-        modal.querySelector('button.cancel').addEventListener('click', cancelEvent);
-        modal.querySelector('.modal-background').addEventListener('click', cancelEvent);
-
-        modal.classList.add('is-active');
-
+    for (var i = 0; permissionsMap[i]; i++) {
+      document.getElementById(permissionsMap[i]).checked = permissions[i];
     }
+
+    const closeModal = function() {
+      modal
+        .querySelector("button.confirm")
+        .removeEventListener("click", confirmEvent);
+      modal
+        .querySelector("button.cancel")
+        .removeEventListener("click", cancelEvent);
+      modal
+        .querySelector(".modal-background")
+        .removeEventListener("click", cancelEvent);
+      modal.classList.remove("is-active");
+    };
+
+    const confirmEvent = function(evt) {
+      var form = document.querySelector("form");
+      evt.target.classList.add("is-loading");
+      var data = {
+        id: elem.getAttribute("data-id")
+      };
+
+      for (var i = 0; permissionsMap[i]; i++) {
+        if (
+          Boolean(document.getElementById(permissionsMap[i]).checked) !=
+          Boolean(permissions[i])
+        ) {
+          data[permissionsMap[i]] = permissions[i] = document.getElementById(
+            permissionsMap[i]
+          ).checked;
+        }
+      }
+
+      fetch("permission", {
+        method: "post",
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(jsonData => {
+          evt.target.classList.remove("is-loading");
+          if (jsonData.status) {
+            elem.setAttribute("data-permissions", permissions);
+            closeModal();
+          } else {
+            // what to do if there's an error?
+          }
+        });
+    };
+
+    const cancelEvent = function(evt) {
+      // onCancel && onCancel();
+      closeModal();
+    };
+
+    modal
+      .querySelector("button.confirm")
+      .addEventListener("click", confirmEvent);
+    modal.querySelector("button.cancel").addEventListener("click", cancelEvent);
+    modal
+      .querySelector(".modal-background")
+      .addEventListener("click", cancelEvent);
+
+    modal.classList.add("is-active");
+  }
 </script>
 <script>
-    function dataToRow(data) {
-        console.log(data)
-        row = document.createElement('tr')
+  function dataToRow(data) {
+    console.log(data);
+    row = document.createElement("tr");
 
-        displayName = document.createElement('td')
-        displayName.innerText = data.name
-        row.appendChild(displayName)
+    displayName = document.createElement("td");
+    displayName.innerText = data.name;
+    row.appendChild(displayName);
 
-        userType = document.createElement('td')
-        userType.innerText = data.userType
-        row.appendChild(userType)
+    userType = document.createElement("td");
+    userType.innerText = data.userType;
+    row.appendChild(userType);
 
-        row.setAttribute('data-name', data.name)
-        row.setAttribute('data-id', data.id)
-        row.setAttribute('data-type', data.userType)
-        row.setAttribute('data-username', data.username)
-        row.setAttribute('data-permissions', data.permissions)
+    row.setAttribute("data-name", data.name);
+    row.setAttribute("data-id", data.id);
+    row.setAttribute("data-type", data.userType);
+    row.setAttribute("data-username", data.username);
+    row.setAttribute("data-permissions", data.permissions);
 
-        row.addEventListener('click', function (evt) {
-            openModalUserEdit(this)
-        });
+    row.addEventListener("click", function(evt) {
+      openModalUserEdit(this);
+    });
 
-        return row;
-    }
+    return row;
+  }
 
-    var nextID = undefined;
-    (getMore = function () {
-        fetch('data.json', {
-            method: 'post',
-            body: JSON.stringify({ startIndex: nextID })
-        })
-            .then(response => response.json())
-            .then(jsonData => {
-                if (jsonData.count == 0) {
-                    // no more data, hide / disable fetch more rows
-                    document.querySelector('table tfoot').style.display = "none"
-                } else {
-                    // var time = jsonData.generated
-                    for (var data of jsonData.results) {
-                        document.querySelector("table tbody").appendChild(dataToRow(data))
-                    }
-                    nextID = jsonData.nextRow
-                    // nextID += jsonData.count
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })()
+  var nextID = undefined;
+  (getMore = function() {
+    fetch("data.json", {
+      method: "post",
+      body: JSON.stringify({ startIndex: nextID })
+    })
+      .then(response => response.json())
+      .then(jsonData => {
+        if (jsonData.count == 0) {
+          // no more data, hide / disable fetch more rows
+          document.querySelector("table tfoot").style.display = "none";
+        } else {
+          // var time = jsonData.generated
+          for (var data of jsonData.results) {
+            document.querySelector("table tbody").appendChild(dataToRow(data));
+          }
+          nextID = jsonData.nextRow;
+          // nextID += jsonData.count
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  })();
 </script>
 <style>
-    tbody tr {
-        cursor: pointer;
-    }
+  tbody tr {
+    cursor: pointer;
+  }
 </style>
 {% endblock %}

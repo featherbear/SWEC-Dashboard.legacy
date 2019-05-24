@@ -5,7 +5,7 @@ from ..connectors import Database
 
 
 def authenticate(username, password):
-    ## Cookie structure
+    # Cookie structure
     # AUTH_TYPE|USERNAME|EXPIRY
 
     if (config["SUPERUSER"]["enabled"]

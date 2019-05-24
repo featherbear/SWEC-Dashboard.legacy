@@ -60,9 +60,9 @@ class Elvanto(object):
                     "Authorization": self.__AUTH_DATA
                 },
                 **kwargs)
-        except Exception as e:
-            print("Error: %s" % e)
-            raise e
+        except Exception as err:
+            print(err)
+            raise err
         else:
             return tornado.escape.json_decode(response.body)
 
@@ -94,15 +94,18 @@ class ElvantoAuth(tornado.web.RequestHandler, tornado.auth.OAuth2Mixin):
 
         fut = http.fetch(self._OAUTH_ACCESS_TOKEN_URL,
                          method="POST",
-                         headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                         headers={
+                             'Content-Type': 'application/x-www-form-urlencoded'},
                          body=body)
-        fut.add_done_callback(wrap(functools.partial(self._on_access_token, callback)))
+        fut.add_done_callback(
+            wrap(functools.partial(self._on_access_token, callback)))
 
     def _on_access_token(self, future, response_fut):
         try:
             response = response_fut.result()
         except Exception as e:
-            future.set_exception(tornado.auth.AuthError('Elvanto auth error: %s' % str(e)))
+            future.set_exception(tornado.auth.AuthError(
+                'Elvanto auth error: %s' % str(e)))
             return
 
         res = tornado.escape.json_decode(response.body)

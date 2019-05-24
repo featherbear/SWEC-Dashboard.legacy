@@ -1,3 +1,4 @@
+from ... import sermons, audit
 from ...auth import PEM
 from tornado.httputil import HTTPServerRequest
 from tornado.web import RequestHandler, authenticated
@@ -25,9 +26,6 @@ def sermonHome(self: BaseHandler, path):
     return self.render_jinja2("/dashboard/sermon/index.html")
 
 
-from ... import sermons, audit
-
-
 @routing.POST("/dashboard/sermon/edit")
 def editSermon(self: BaseHandler, path):
     result = False
@@ -46,7 +44,8 @@ def editSermon(self: BaseHandler, path):
         if not id:
             date = postArgs.get('date')
             site = postArgs.get('site')
-            d = sermons.createSermon(site, date, title, passage, speaker, outline)
+            d = sermons.createSermon(
+                site, date, title, passage, speaker, outline)
             audit.log(audit.action.SERMON_CREATE, self.current_user, d)
             result = True
         else:
@@ -54,7 +53,7 @@ def editSermon(self: BaseHandler, path):
             audit.log(audit.action.SERMON_EDIT, self.current_user, id)
             result = True
 
-    return self.finish(json_encode(dict(status = result)))
+    return self.finish(json_encode(dict(status=result)))
 
 
 @routing.POST("/dashboard/sermon/data.json")
@@ -66,23 +65,22 @@ def fetchMore(self: BaseHandler, path):
     start = postArgs.get("startIndex", 0)
     amount = postArgs.get("amount", 10)
     data = sermons.getSermons(start, amount)
-    print(data)
 
     timeTaken = time() - queryStart
 
     result = dict(
-        results = [dict(
-            id = record[0],
-            site = record[1],
-            date = record[2],
-            title = record[3],
-            passage = record[4],
-            speaker = record[5],
-            outline = record[6]
+        results=[dict(
+            id=record[0],
+            site=record[1],
+            date=record[2],
+            title=record[3],
+            passage=record[4],
+            speaker=record[5],
+            outline=record[6]
         ) for record in data],
-        count = len(data),
-        nextRow = start - len(data),
-        generated = timeTaken,
+        count=len(data),
+        nextRow=start - len(data),
+        generated=timeTaken,
     )
 
     return self.finish(json_encode(result))

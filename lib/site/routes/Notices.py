@@ -1,3 +1,4 @@
+from ... import sites, notices_link
 from ...auth import PEM
 from tornado.httputil import HTTPServerRequest
 from tornado.web import RequestHandler, authenticated
@@ -86,8 +87,8 @@ def noticesSubmit_(self: BaseHandler, path):
         notices_link.updateSitesForNotice(notice.id, enabledSites)
         audit.log(audit.action.NOTICE_SUBMIT,
                   notice.author, notice.id, notice.added)
-    except Exception as e:
-        print(e)
+    except Exception as err:
+        print(err)
     finally:
         return self.redirect("/dashboard/notices/")
 
@@ -121,7 +122,7 @@ def approveNotice(self: BaseHandler, path):
             status = True
             audit.log(audit.action.NOTICE_APPROVE, self.current_user, id)
 
-    return self.write(json_encode(dict(status = status)))
+    return self.write(json_encode(dict(status=status)))
 
 
 @routing.POST("/dashboard/notices/edit")
@@ -132,15 +133,16 @@ def editNotice(self: BaseHandler, path):
 
     id = postArgs.get('id')
     data = dict(
-        title = postArgs.get('title'),
-        description = postArgs.get('description'),
-        date = postArgs.get('startDate'),
-        endDate = postArgs.get('endDate'),
+        title=postArgs.get('title'),
+        description=postArgs.get('description'),
+        date=postArgs.get('startDate'),
+        endDate=postArgs.get('endDate'),
     )
     print(postArgs.get('sites'))
 
     enabledSites = postArgs.get('sites')
-    enabledSites = list(map(int, filter(lambda key: enabledSites[key], enabledSites.keys())))
+    enabledSites = list(
+        map(int, filter(lambda key: enabledSites[key], enabledSites.keys())))
 
     if any([self.current_user.userHasPermission(PEM.NOTICE_MODIFY),
             notices.getNotice(id).author == self.current_user.id]):
@@ -148,7 +150,7 @@ def editNotice(self: BaseHandler, path):
             notices_link.updateSitesForNotice(id, enabledSites)
             audit.log(audit.action.NOTICE_EDIT, self.current_user, id)
             status = True
-    return self.write(json_encode(dict(status = status)))
+    return self.write(json_encode(dict(status=status)))
 
 
 @routing.POST("/dashboard/notices/delete")
@@ -163,7 +165,7 @@ def deleteNotice(self: BaseHandler, path):
             notices_link.updateSitesForNotice(id, [])
             audit.log(audit.action.NOTICE_DELETE, self.current_user, id)
             status = True
-    return self.write(json_encode(dict(status = status)))
+    return self.write(json_encode(dict(status=status)))
 
 
 @routing.POST("/dashboard/notices/active")
@@ -180,10 +182,7 @@ def activateNotice(self: BaseHandler, path):
                 audit.action.NOTICE_ACTIVATE if turnOn else audit.action.NOTICE_DEACTIVATE, self.current_user, id)
             status = True
 
-    return self.write(json_encode(dict(status = status)))
-
-
-from ... import sites, notices_link  ### ### ### ###
+    return self.write(json_encode(dict(status=status)))
 
 
 @routing.POST("/dashboard/notices/data.json")
@@ -196,47 +195,37 @@ def fetchMore(self: BaseHandler, path):
     uid = self.current_user.id
     canManage = self.current_user.userHasPermission(PEM.NOTICE_MODIFY)
 
-    data = notices.fetch(start, amount, uid = uid,
-                         showPending = canManage, showInactive = canManage)
+    data = notices.fetch(start, amount, uid=uid,
+                         showPending=canManage, showInactive=canManage)
 
     noticesSiteMap = notices_link.getSitesMatchingNotice()
 
     timeTaken = time() - queryStart
 
     return self.finish(json_encode(dict(
-        results = [dict(
-            id = record[fetchIndexes.ID],
-            title = record[fetchIndexes.TITLE],
-            description = record[fetchIndexes.DESCRIPTION],
-            author = record[fetchIndexes.AUTHOR],
+        results=[dict(
+            id=record[fetchIndexes.ID],
+            title=record[fetchIndexes.TITLE],
+            description=record[fetchIndexes.DESCRIPTION],
+            author=record[fetchIndexes.AUTHOR],
 
-            date = record[fetchIndexes.DATE],
-            endDate = record[fetchIndexes.END_DATE],
+            date=record[fetchIndexes.DATE],
+            endDate=record[fetchIndexes.END_DATE],
 
-            priority = record[fetchIndexes.PRIORITY],
-            sites = noticesSiteMap.get(record[fetchIndexes.ID]),
+            priority=record[fetchIndexes.PRIORITY],
+            sites=noticesSiteMap.get(record[fetchIndexes.ID]),
 
-            added = record[fetchIndexes.ADDED],
-            approved = int(record[fetchIndexes.APPROVED]) == 1,
-            active = int(record[fetchIndexes.ACTIVE]) == 1,
-            name = record[fetchIndexes.USERNAME] if record[fetchIndexes.USER_TYPE] == "LOCAL"
+            added=record[fetchIndexes.ADDED],
+            approved=int(record[fetchIndexes.APPROVED]) == 1,
+            active=int(record[fetchIndexes.ACTIVE]) == 1,
+            name=record[fetchIndexes.USERNAME] if record[fetchIndexes.USER_TYPE] == "LOCAL"
             else ((record[fetchIndexes.FIRST_NAME] or "?") + " "
                   + (record[fetchIndexes.LAST_NAME] or "")).strip() if record[fetchIndexes.AUTHOR] != 0 else "Admin",
         ) for record in data],
-        sites = sites.getSites(),
-        count = len(data),
-        generated = timeTaken,
-        uid = uid,
-        canManage = canManage
+        sites=sites.getSites(),
+        count=len(data),
+        generated=timeTaken,
+        uid=uid,
+        canManage=canManage
 
     )))
-,
-        sites = sites.getSites(),
-        count = len(data),
-        generated = timeTaken,
-        uid = uid,
-        canManage = canManage
-
-    )))
-))
-)))

@@ -8,16 +8,16 @@ class NoticeModel():
 
     title: str
     description: str
-    author: id  ## rID of User
+    author: id  # rID of User
 
-    date: int  ## actually timeContainer object
-    endDate: int  ###
+    date: int  # actually timeContainer object
+    endDate: int
 
     priority: int
     added: int
     approved: bool
 
-    active: int  ## is the notice active
+    active: int  # is the notice active
 
 
 class Notice(NoticeModel):

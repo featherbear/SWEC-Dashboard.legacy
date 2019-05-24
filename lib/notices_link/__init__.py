@@ -25,7 +25,6 @@ def getNoticesMatchingSite(siteID: int = None):
             FROM notices_link
             WHERE site = ?
             """, (siteID,))
-        print(result)
         return result
 
 
@@ -44,7 +43,6 @@ def getSitesMatchingNotice(noticeID: int = None):
             FROM notices_link
             WHERE notice = ?
             """, (noticeID,))
-        print(result)
         return result
 
 
@@ -55,12 +53,12 @@ def updateSitesForNotice(noticeID: int, sites: [int]):
     WHERE notice = ?
     """,
                     (noticeID,),
-                    commit = False)
+                    commit=False)
     for site in sites:
         Database.insert("""
         INSERT
         INTO notices_link (notice, site)
         VALUES (?, ?)""",
                         (noticeID, site),
-                        commit = False)
+                        commit=False)
     Database.conn.commit()

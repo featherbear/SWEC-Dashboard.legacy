@@ -1,103 +1,106 @@
-{% extends "/dropins/site.html" %}
-{% block head %}
+{% extends "/dropins/site.html" %} {% block head %}
 <script type="text/javascript" src="/assets/js/moment.min.js"></script>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 
 <table class="table is-striped is-hoverable is-fullwidth">
-
-    <tbody>
-
-    </tbody>
-    <tfoot>
+  <tbody></tbody>
+  <tfoot>
     <tr>
-        <th colspan="2"><a onclick="document.getElementsByClassName('modal')[0].classList.add('is-active')">Load
-            more...</a></th>
+      <th colspan="2">
+        <a
+          onclick="document.getElementsByClassName('modal')[0].classList.add('is-active')"
+          >Load more...</a
+        >
+      </th>
     </tr>
-    </tfoot>
+  </tfoot>
 </table>
 
-
 <script>
-    let summaryDataFor = function (dataID) {
-        let data = sermons[dataID];
-        return `${data.title} // ${data.passage} (${services[data.service]} - ${formatDate(data.date)})`;
-    };
+  let summaryDataFor = function(dataID) {
+    let data = sermons[dataID];
+    return `${data.title} // ${data.passage} (${
+      services[data.service]
+    } - ${formatDate(data.date)})`;
+  };
 
-    let formatDate = function (date) {
-        return moment(date).format("D MMM, YYYY");
-    };
+  let formatDate = function(date) {
+    return moment(date).format("D MMM, YYYY");
+  };
 
+  let dataToRow = function(dataID) {
+    let row = document.createElement("tr");
+    row.classList.add("data_row");
 
-    let dataToRow = function (dataID) {
-        let row = document.createElement('tr');
-        row.classList.add('data_row');
+    let summary = document.createElement("td");
+    summary.innerText = summaryDataFor(dataID);
+    row.appendChild(summary);
 
-        let summary = document.createElement('td');
-        summary.innerText = summaryDataFor(dataID);
-        row.appendChild(summary)
+    let view = document.createElement("td");
+    let viewBtn = document.createElement("a");
+    viewBtn.innerText = "view";
+    viewBtn.classList.add("button", "is-outlined", "is-info");
+    viewBtn.href = "../generate/?id=" + dataID;
+    view.appendChild(viewBtn);
+    row.appendChild(view);
 
-        let view = document.createElement('td');
-        let viewBtn = document.createElement('a');
-        viewBtn.innerText = "view";
-        viewBtn.classList.add('button', 'is-outlined', "is-info");
-        viewBtn.href = "../generate/?id=" + dataID;
-        view.appendChild(viewBtn);
-        row.appendChild(view);
+    return row;
+  };
 
-        return row;
-    }
+  let services = {};
+  fetch("/dashboard/sites.json", {
+    method: "post"
+  })
+    .then(response => response.json())
+    .then(jsonData => {
+      services = jsonData;
+    });
 
-    let services = {}
-    fetch('/dashboard/sites.json', {
-        method: 'post'
-    }).then(response => response.json())
-        .then(jsonData => {
-            services = jsonData;
-        });
+  let sermons = {};
 
-    let sermons = {};
+  var nextID = undefined;
+  (getMore = function() {
+    fetch("/dashboard/sermon/data.json", {
+      method: "post",
+      body: JSON.stringify({ startIndex: nextID })
+    })
+      .then(response => response.json())
+      .then(jsonData => {
+        // var time = jsonData.generated
+        for (var data of jsonData.results) {
+          if (!sermons.hasOwnProperty(data.id)) {
+            sermons[data.id] = {
+              service: data.site,
+              date: data.date,
+              title: data.title,
+              passage: data.passage,
+              speaker: data.speaker,
+              outline: data.outline
+            };
 
+            for (var row of document.getElementsByClassName("inserter_row")) {
+              if (
+                row.getAttribute("date") == data.date &&
+                row.getAttribute("site") == data.site
+              ) {
+                row.parentElement.removeChild(row);
+              }
+            }
+            document
+              .querySelector("table tbody")
+              .appendChild(dataToRow(data.id));
+          }
+        }
 
-    var nextID = undefined;
-    (getMore = function () {
-        fetch('/dashboard/sermon/data.json', {
-            method: 'post',
-            body: JSON.stringify({startIndex: nextID})
-        })
-            .then(response => response.json())
-            .then(jsonData => {
-
-                // var time = jsonData.generated
-                for (var data of jsonData.results) {
-                    if (!sermons.hasOwnProperty(data.id)) {
-                        sermons[data.id] = {
-                            service: data.site,
-                            date: data.date,
-                            title: data.title,
-                            passage: data.passage,
-                            speaker: data.speaker,
-                            outline: data.outline
-                        };
-
-                        for (var row of document.getElementsByClassName('inserter_row')) {
-                            if (row.getAttribute('date') == data.date && row.getAttribute('site') == data.site) {
-                                row.parentElement.removeChild(row);
-                            }
-                        }
-                        document.querySelector("table tbody").appendChild(dataToRow(data.id));
-                    }
-                }
-
-                nextID = jsonData.nextRow;
-                if (jsonData.count == 0 || nextID == -1) {
-                    // no more data, hide / disable fetch more rows
-                    document.querySelector('table tfoot').style.display = "none"
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })()
+        nextID = jsonData.nextRow;
+        if (jsonData.count == 0 || nextID == -1) {
+          // no more data, hide / disable fetch more rows
+          document.querySelector("table tfoot").style.display = "none";
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  })();
 </script>
 {% endblock %}

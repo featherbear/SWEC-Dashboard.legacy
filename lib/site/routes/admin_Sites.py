@@ -35,8 +35,8 @@ def editSite(self: BaseHandler, path):
     postArgs = json_decode(self.request.body)
 
     response = dict(
-        id = int,
-        name = str,
+        id=int,
+        name=str,
         replacements={}
     )
 
@@ -52,10 +52,9 @@ def editSite(self: BaseHandler, path):
         response["id"] = Database.insert("""
         INSERT INTO sites (name)
         VALUES (?)
-        """, (postArgs["name"],) )
+        """, (postArgs["name"],))
 
     response["name"] = postArgs["name"]
-
 
     for option in postArgs["replacements"]:
         if "id" in option:
@@ -79,21 +78,25 @@ def editSite(self: BaseHandler, path):
 
     return self.finish(json_encode(response))
 
+
 @routing.POST("/dashboard/sites.json")
 def getSites(self: BaseHandler, path):
     from ... import sites
     return self.finish(json_encode(sites.getSites()))
+
 
 @routing.POST("/dashboard/admin/sites/data.json")
 def fetchMore(self: BaseHandler, path):
     queryStart = time()
 
     sitesSQL = Database.fetchAll("SELECT id, name FROM sites")
-    replacementsSQL = Database.fetchAll("SELECT id, site, key, value FROM sites_data")
+    replacementsSQL = Database.fetchAll(
+        "SELECT id, site, key, value FROM sites_data")
 
     replacements = {}
     for site in sitesSQL:
-        replacements[site[0]] = list(map(list, filter(lambda record: record[1] == site[0], replacementsSQL)))
+        replacements[site[0]] = list(
+            map(list, filter(lambda record: record[1] == site[0], replacementsSQL)))
         for record in replacements[site[0]]:
             del record[1]
 

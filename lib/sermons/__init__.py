@@ -1,3 +1,4 @@
+from ..connectors import Database
 sermons_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS sermons (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     
@@ -14,8 +15,6 @@ sermons_SQLCreateQuery = """CREATE TABLE IF NOT EXISTS sermons (
 );
 """
 
-from ..connectors import Database
-
 
 def getSermon(id: int):
     return Database.fetchOne("SELECT * FROM sermons WHERE id = ?", (id,))
@@ -23,7 +22,8 @@ def getSermon(id: int):
 
 def getSermons(start: int = None, count: int = None):
     if start and count:
-        result = Database.fetchAll("SELECT * FROM sermons ORDER BY id DESC LIMIT ?, ?", (start, count))
+        result = Database.fetchAll(
+            "SELECT * FROM sermons ORDER BY id DESC LIMIT ?, ?", (start, count))
     else:
         result = Database.fetchAll("SELECT * FROM sermons ORDER BY id DESC")
     return result
@@ -35,7 +35,7 @@ def createSermon(site, date, title, passage, speaker, outline):
         INTO sermons (site, date, title, passage, speaker, outline)
         VALUES (?, ?, ?, ?, ?, ?)   
     """,
-                    (site, date, title, passage, speaker, outline))
+                           (site, date, title, passage, speaker, outline))
 
 
 def editSermon(id, title, passage, speaker, outline):
